@@ -1,4 +1,4 @@
-var socket = io('/my_namespace');     //change this in your own code!
+var socket = io('/dimas_channel');     //change this in your own code!
 var message_state = 0;
 
 function setup(){

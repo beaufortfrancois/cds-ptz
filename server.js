@@ -5,6 +5,10 @@ var app = express();
 
 app.use(express.static('public'));
 
+var server = app.listen(process.env.PORT || 8081, function () {
+  console.log("Shazam!");
+})
+
 
 var io = require('socket.io')(server);    //http://socket.io/docs/
 var name_spaced_com = io.of('/dimas_channel'); //change this name!!!
@@ -27,6 +31,3 @@ name_spaced_com.on('connection', function (socket) {
   })
 })
 
-var server = app.listen(process.env.PORT || 8081, function () {
-  console.log("Shazam! listening on port 8081");
-})
