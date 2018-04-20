@@ -29,7 +29,7 @@ socket.on('trigger_1', function(){
   message_state=1;
 })
 
-socket.on('trigger_2', function(){
-  console.log("trigger 2 listener fired");
+socket.on('trigger_2', function(data){
+  console.log("trigger 2 listener fired and said: "+ data.message);
   message_state=2;
 })
