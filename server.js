@@ -27,7 +27,7 @@ name_spaced_com.on('connection', function (socket) {
     // response.json({"status":"success"});
     response.sendStatus(200);
     console.log("trigger 2 pressed");
-    name_spaced_com.emit('trigger_2', {message:"party at my place!"});
+    name_spaced_com.emit('trigger_2', {message:"party at my place!", value: 7});
   })
 })
 

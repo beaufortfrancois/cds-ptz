@@ -1,12 +1,16 @@
 var socket = io('/dimas_channel');     //change this in your own code!
 var message_state = 0;
 
+var GLOBAL_VAR = 13;
+
 function setup(){
   createCanvas(400, 400);
   background(0);
 }
 
 function draw(){
+  
+  console.log(GLOBAL_VAR);
 
   background(0);
   textSize(20);
@@ -31,5 +35,6 @@ socket.on('trigger_1', function(){
 
 socket.on('trigger_2', function(data){
   console.log("trigger 2 listener fired and said: "+ data.message);
+  GLOBAL_VAR = data.value;
   message_state=2;
 })
