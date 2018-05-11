@@ -543,6 +543,7 @@ packages:
     engines:
       node: '>=4'
     optional: true
+    requiresBuild: true
     resolution:
       integrity: sha512-HNMztPP5A1sKuVFmdZ6BPVpBQd5bUjNC8EFMFiICK+oho/OQsAJy5hnIx4btMHiOk8j04f/DbIlqnEZ9d72dqg==
   /vary/1.1.2:
@@ -570,7 +571,7 @@ packages:
     resolution:
       integrity: sha1-AI4G2AlDIMNy28L47XagymyKxBk=
 registry: 'https://registry.npmjs.org/'
-shrinkwrapMinorVersion: 4
+shrinkwrapMinorVersion: 5
 shrinkwrapVersion: 3
 specifiers:
   express: ^4.16.3
