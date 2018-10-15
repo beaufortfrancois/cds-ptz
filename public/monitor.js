@@ -1,4 +1,4 @@
-var socket = io('/dimas_channel');     //change this in your own code!
+var socket = io('https://web-sockets-example.glitch.me/dimas_channel');     //change this in your own code!
 var message_state = 0;
 
 var GLOBAL_VAR = 13;
