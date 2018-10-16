@@ -1,7 +1,19 @@
 const socket = io();
 const mimeType = 'video/webm; codecs=vp9';
 
+const pipVideo = document.createElement('video');
+pipVideo.autoplay = true;
+pipVideo.muted = true;
+/* BUG */ pipVideo.style.width = 1; document.body.appendChild(pipVideo);
+
+navigator.mediaDevices.getUserMedia({ video: true }).then(cameraVideoStream => {
+  pipVideo.srcObject = cameraVideoStream;
+});
+
+
 video.addEventListener('click', function() {
+
+pipVideo.requestPictureInPicture();
 
 // Record screen video stream and broadcast stream to server
 navigator.getDisplayMedia({ video: true }).then(stream => {
@@ -13,6 +25,7 @@ navigator.getDisplayMedia({ video: true }).then(stream => {
   }
   setInterval(_ => mediaRecorder.requestData(), 1000);
 });
+
   
 });
 
@@ -26,3 +39,4 @@ mediaSource.onsourceopen = _ => {
     sourceBuffer.appendBuffer(event.blob);
   });
 }
+
