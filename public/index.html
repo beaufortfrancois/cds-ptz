@@ -1,9 +1,5 @@
 
 <!DOCTYPE html>
-<!-- If you are not familiar with HTML, check out some basic exmaples here
-http://www.w3schools.com/html/html_basic.asp
-We will generally stick with markup below for most of our examples -->
-
 <html>
   <head>
     <meta charset="utf-8">
@@ -16,7 +12,7 @@ We will generally stick with markup below for most of our examples -->
     <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
     <script>
   
-    const socket = io('/dimas_channel');     //change this in your own code!
+    const socket = io();
 
     const mediaRecorderOptions = {mimeType: 'video/webm; codecs=vp9'};
 
@@ -24,7 +20,7 @@ We will generally stick with markup below for most of our examples -->
 
       const stream = await navigator.getDisplayMedia({ video: true });
       const mediaRecorder = new MediaRecorder(stream, mediaRecorderOptions);
-      mediaRecorder.start(100);
+      mediaRecorder.start(500);
       mediaRecorder.addEventListener('dataavailable', function(e) {
         socket.emit('data-available', { data: e.data });
       });
@@ -40,12 +36,6 @@ We will generally stick with markup below for most of our examples -->
       });
     });
 
-
     </script>
-
-
-    <a href="/monitor.html" target="_new">Monitor</a> | <a href="/trigger.html" target="_new">Triggers</a>
-
-
   </body>
 </html>E
