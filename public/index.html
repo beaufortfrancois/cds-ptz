@@ -9,6 +9,7 @@ We will generally stick with markup below for most of our examples -->
     <meta charset="utf-8">
     <title>template html file</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>video { width: 480px }</style>
   </head>
   <body>
     <video id="video" controls autoplay muted></video>
@@ -23,10 +24,9 @@ We will generally stick with markup below for most of our examples -->
 
       const stream = await navigator.getDisplayMedia({ video: true });
       const mediaRecorder = new MediaRecorder(stream, mediaRecorderOptions);
-      mediaRecorder.start();
+      mediaRecorder.start(100);
       mediaRecorder.addEventListener('dataavailable', function(e) {
         socket.emit('data-available', { data: e.data });
-console.log(e);
       });
 
     })();
@@ -35,9 +35,8 @@ console.log(e);
     video.src = URL.createObjectURL(mediaSource);
     mediaSource.addEventListener('sourceopen', function() {
       let sourceBuffer = mediaSource.addSourceBuffer(mediaRecorderOptions.mimeType);
-      socket.on('play-video', function(data) {
-        sourceBuffer.appendBuffer(e.data);
-        console.log(data);
+      socket.on('play-video', function(e) {
+        sourceBuffer.appendBuffer(e.data.data);
       });
     });
 
