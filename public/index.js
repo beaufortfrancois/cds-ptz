@@ -28,10 +28,11 @@ video.onclick = async _ => {
   mediaRecorder.ondataavailable = event => {
     socket.emit('broadcast', { blob: event.data });
   }
-  setInterval(_ => mediaRecorder.requestData(), 1000);
+  setInterval(_ => mediaRecorder.requestData(), 500);
 }
 
-foo = true;
+let chunks = [];
+let isAppendingBuffer = false;
 
 // Receive video stream from server and play it back.
 const mediaSource = new MediaSource();
@@ -44,7 +45,21 @@ mediaSource.onsourceopen = _ => {
       video.controls = true;
       video.play();
     }
-    sourceBuffer.appendBuffer(event.blob);
+    chunks.push(event.blob);
+    appendBuffer();
   });
+
+  function appendBuffer() {
+    if (chunks.length === 0 || isAppendingBuffer)
+      return;
+    const blob = chunks.shift();
+    sourceBuffer.appendBuffer(blob);
+    isAppendingBuffer = true;
+    sourceBuffer.addEventListener('updateend', function() {
+      isAppendingBuffer = false;
+      appendBuffer();
+    }, { once: true });
+
+  }
 }
 
