@@ -29,5 +29,10 @@ name_spaced_com.on('connection', function (socket) {
     console.log("trigger 2 pressed");
     name_spaced_com.emit('trigger_2', {message:"party at my place!", value: 7});
   })
-})
 
+
+  socket.on('my other event', function (data) {
+    console.log(data);
+  });
+
+});

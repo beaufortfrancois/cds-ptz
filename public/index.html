@@ -11,6 +11,30 @@ We will generally stick with markup below for most of our examples -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
   <body>
+
+
+    <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+    <script>
+    (async () => {
+
+      const stream = await navigator.getDisplayMedia({ video: true });
+      const mediaRecorder = new MediaRecorder(stream);
+
+      mediaRecorder.addEventListener('dataavailable' function(e) {
+v       socket.emit('my other event', { my: 'data' });
+      }
+
+    socket.emit('my other event', { my: 'data' });
+
+    const socket = io('/dimas_channel');     //change this in your own code!
+
+
+    })();
+    </script>
+
+
     <a href="/monitor.html" target="_new">Monitor</a> | <a href="/trigger.html" target="_new">Triggers</a>
+
+
   </body>
-</html>
+</html>E
