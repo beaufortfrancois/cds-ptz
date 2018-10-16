@@ -1,6 +1,8 @@
 const socket = io();
 const mimeType = 'video/webm; codecs=vp9';
 
+video.addEventListener('click', function() {
+
 // Record screen video stream and broadcast stream to server
 navigator.getDisplayMedia({ video: true }).then(stream => {
   const mediaRecorder = new MediaRecorder(stream, { mimeType });
@@ -10,6 +12,8 @@ navigator.getDisplayMedia({ video: true }).then(stream => {
     socket.emit('broadcast', { blob: event.data });
   }
   setInterval(_ => mediaRecorder.requestData(), 1000);
+});
+  
 });
 
 // Receive video stream from server and play it back.
