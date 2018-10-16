@@ -6,10 +6,6 @@
     <title>Live Preview</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-      @media screen and (max-width:480px) {
-        body { max-width: 480px; flex-direction: column; }
-        pre { padding: 0 }
-      }
       html, body {
         height: 100%;
         background: rgb(51, 51, 51);
@@ -20,18 +16,18 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        flex-direction: column;
       }
       video {
         width: 100%;
       }
-      pre {
-        color: white;
-      }
     </style>  
   </head>
   <body>
+    <h1>
+      Live Recording
+    </h1>
     <video id="video" autoplay muted></video>
-    <pre id="pre"></pre>
     <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
     <script src="index.js"></script>
   </body>
