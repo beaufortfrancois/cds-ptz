@@ -1,14 +1,14 @@
-var express = require('express');
+var express = require("express");
 var app = express();
 
 var server = app.listen(8081);
-var io = require('socket.io')(server);
+var io = require("socket.io")(server);
 
-io.on('connection', function(socket) {
-  socket.on('broadcast', function(data) {
+io.on("connection", socket => {
+  socket.on("broadcast", data => {
     // Broadcast to all connected clients.
-    io.emit('play', data);
+    io.emit("play", data);
   });
 });
 
-app.use(express.static('public'));
+app.use(express.static("public"));
