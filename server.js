@@ -31,8 +31,10 @@ name_spaced_com.on('connection', function (socket) {
   })
 
 
-  socket.on('my other event', function (data) {
+  socket.on('data-available', function (data) {
     console.log(data);
+    name_spaced_com.emit('play-video', { data });
+
   });
 
 });

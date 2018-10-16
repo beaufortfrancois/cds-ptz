@@ -11,25 +11,37 @@ We will generally stick with markup below for most of our examples -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
   <body>
-
-
+    <video id="video" controls autoplay muted></video>
     <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
     <script>
+  
+    const socket = io('/dimas_channel');     //change this in your own code!
+
+    const mediaRecorderOptions = {mimeType: 'video/webm; codecs=vp9'};
+
     (async () => {
 
       const stream = await navigator.getDisplayMedia({ video: true });
-      const mediaRecorder = new MediaRecorder(stream);
-
-      mediaRecorder.addEventListener('dataavailable' function(e) {
-v       socket.emit('my other event', { my: 'data' });
-      }
-
-    socket.emit('my other event', { my: 'data' });
-
-    const socket = io('/dimas_channel');     //change this in your own code!
-
+      const mediaRecorder = new MediaRecorder(stream, mediaRecorderOptions);
+      mediaRecorder.start();
+      mediaRecorder.addEventListener('dataavailable', function(e) {
+        socket.emit('data-available', { data: e.data });
+console.log(e);
+      });
 
     })();
+
+    const mediaSource = new MediaSource();
+    video.src = URL.createObjectURL(mediaSource);
+    mediaSource.addEventListener('sourceopen', function() {
+      let sourceBuffer = mediaSource.addSourceBuffer(mediaRecorderOptions.mimeType);
+      socket.on('play-video', function(data) {
+        sourceBuffer.appendBuffer(e.data);
+        console.log(data);
+      });
+    });
+
+
     </script>
 
 
