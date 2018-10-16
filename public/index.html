@@ -3,7 +3,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Live Preview</title>
+    <title>Picture-in-Picture & Screen Capture</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
       html, body {
@@ -22,6 +22,7 @@
         font-family: Google Sans,Roboto,Arial,Helvetica,sans-serif;
         color: white;
       }
+      span {  white-space: nowrap; }
       #video {
         width: 100%;
         background-image: url('https://developer.chrome.com/devsummit/static/images/lines/link-videos.svg');
@@ -32,7 +33,7 @@
     </style>  
   </head>
   <body>
-    <h1>Recording Demo</h1>
+    <h1>Picture-in-Picture & <span>Screen Capture 🐣</span></h1>
     <video id="video" autoplay muted></video>
     <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
     <script src="index.js"></script>
