@@ -5,9 +5,10 @@ const mimeType = 'video/webm; codecs=vp9';
 navigator.getDisplayMedia({ video: true }).then(stream => {
   const mediaRecorder = new MediaRecorder(stream, { mimeType });
 
-  mediaRecorder.start(1000 /* 1s to record into each blob */);
+  mediaRecorder.start(500 /* 500ms to record into each blob */);
   mediaRecorder.ondataavailable = event => {
     socket.emit('broadcast', { blob: event.data });
+pre.textContent += 
   }
 });
 

@@ -10,6 +10,10 @@
         body { max-width: 480px; flex-direction: column; }
         pre { padding: 0 }
       }
+      html, body {
+        height: 100%;
+        background: rgb(51, 51, 51);
+      }
       body {
         max-width: 960px;
         margin: 0 auto;
@@ -19,13 +23,15 @@
       }
       video {
         width: 100%;
-        padding: 4px 0;
-        margin-bottom: 4px;
+      }
+      pre {
+        color: white;
       }
     </style>  
   </head>
   <body>
-    <video id="video" controls autoplay muted></video>
+    <video id="video" autoplay muted></video>
+    <pre id="pre"></pre>
     <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
     <script src="index.js"></script>
   </body>
