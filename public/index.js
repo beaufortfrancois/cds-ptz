@@ -41,6 +41,7 @@ mediaSource.onsourceopen = _ => {
     if (!document.pictureInPictureElement) {
       video.controls = true;
       video.muted = false;
+      video.currentTime = 
     }
     sourceBuffer.appendBuffer(event.blob);
   });
