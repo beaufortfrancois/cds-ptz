@@ -31,6 +31,8 @@ video.onclick = async _ => {
   setInterval(_ => mediaRecorder.requestData(), 1000);
 }
 
+foo = true;
+
 // Receive video stream from server and play it back.
 const mediaSource = new MediaSource();
 video.src = URL.createObjectURL(mediaSource);
@@ -38,10 +40,9 @@ mediaSource.onsourceopen = _ => {
   const sourceBuffer = mediaSource.addSourceBuffer(mimeType);
 
   socket.on('playback', event => {
-    if (!document.pictureInPictureElement) {
+    if (!document.pictureInPictureElement && !video.controls) {
       video.controls = true;
-      video.muted = false;
-      video.currentTime = 
+      video.play();
     }
     sourceBuffer.appendBuffer(event.blob);
   });
