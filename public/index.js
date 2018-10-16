@@ -1,5 +1,5 @@
 const socket = io();
-const mimeType = 'video/webm; codecs=vp9';
+const mimeType = 'video/webm; codecs=vp9,opus';
 
 const pipVideo = document.createElement('video');
 pipVideo.autoplay = true;
@@ -10,9 +10,9 @@ navigator.mediaDevices.getUserMedia({ video: true }).then(cameraVideoStream => {
   pipVideo.srcObject = cameraVideoStream;
 });
 
-video.onclick = _ => { pipVideo.requestPictureInPicture(); };
-
-pipVideo.onenterpictureinpicture = async _ => {
+// User clicks on video to enter Picture-in-Picture and record display and microphone.
+video.onclick = async _ => {
+  await pipVideo.requestPictureInPicture();
 
   const screenVideoStream = await navigator.getDisplayMedia({ video: true });
   const voiceAudioStream  = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -38,6 +38,10 @@ mediaSource.onsourceopen = _ => {
   const sourceBuffer = mediaSource.addSourceBuffer(mimeType);
 
   socket.on('playback', event => {
+    if (!document.pictureInPictureElement) {
+      video.controls = true;
+      video.muted = false;
+    }
     sourceBuffer.appendBuffer(event.blob);
   });
 }
