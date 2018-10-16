@@ -3,39 +3,13 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>template html file</title>
+    <title>Live Preview</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>video { width: 480px }</style>
   </head>
   <body>
     <video id="video" controls autoplay muted></video>
     <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
-    <script>
-  
-    const socket = io();
-
-    const mediaRecorderOptions = {mimeType: 'video/webm; codecs=vp9'};
-
-    (async () => {
-
-      const stream = await navigator.getDisplayMedia({ video: true });
-      const mediaRecorder = new MediaRecorder(stream, mediaRecorderOptions);
-      mediaRecorder.start(500);
-      mediaRecorder.addEventListener('dataavailable', function(e) {
-        socket.emit('data-available', { data: e.data });
-      });
-
-    })();
-
-    const mediaSource = new MediaSource();
-    video.src = URL.createObjectURL(mediaSource);
-    mediaSource.addEventListener('sourceopen', function() {
-      let sourceBuffer = mediaSource.addSourceBuffer(mediaRecorderOptions.mimeType);
-      socket.on('play-video', function(e) {
-        sourceBuffer.appendBuffer(e.data.data);
-      });
-    });
-
-    </script>
+    <script src="index.js"></script>
   </body>
-</html>E
+</html>
