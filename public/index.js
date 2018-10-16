@@ -26,9 +26,12 @@ video.onclick = async _ => {
   const mediaRecorder = new MediaRecorder(stream, { mimeType });
   mediaRecorder.start();
   mediaRecorder.ondataavailable = event => {
-    socket.emit('broadcast', { blob: event.data });
+
+    chunks.push(event.blob);
+    appendBuffer();
+//    socket.emit('broadcast', { blob: event.data });
   }
-  setInterval(_ => mediaRecorder.requestData(), 500);
+  setInterval(_ => mediaRecorder.requestData(), 30);
 }
 
 let chunks = [];
@@ -38,7 +41,7 @@ let isAppendingBuffer = false;
 const mediaSource = new MediaSource();
 video.src = URL.createObjectURL(mediaSource);
 mediaSource.onsourceopen = _ => {
-  const sourceBuffer = mediaSource.addSourceBuffer(mimeType);
+  mediaSource.addSourceBuffer(mimeType);
 
   socket.on('playback', event => {
     if (!document.pictureInPictureElement && !video.controls) {
@@ -48,18 +51,19 @@ mediaSource.onsourceopen = _ => {
     chunks.push(event.blob);
     appendBuffer();
   });
+}
 
-  function appendBuffer() {
-    if (chunks.length === 0 || isAppendingBuffer)
-      return;
-    const blob = chunks.shift();
-    sourceBuffer.appendBuffer(blob);
-    isAppendingBuffer = true;
-    sourceBuffer.addEventListener('updateend', function() {
-      isAppendingBuffer = false;
-      appendBuffer();
-    }, { once: true });
+function appendBuffer() {
+  if (chunks.length === 0 || isAppendingBuffer)
+    return;
+  const blob = chunks.shift();
+  const sourceBuffer = mediaSource.sourceBuffers[0];
+  sourceBuffer.appendBuffer(blob);
+  isAppendingBuffer = true;
+  sourceBuffer.addEventListener('updateend', function() {
+    isAppendingBuffer = false;
+    appendBuffer();
+  }, { once: true });
 
-  }
 }
 
