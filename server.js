@@ -6,7 +6,8 @@ var io = require('socket.io')(server);
 
 io.on('connection', function(socket) {
   socket.on('broadcast', function(data) {
-    socket.emit('play', data);
+    // Broadcast to all connected clients.
+    io.emit('play', data);
   });
 });
 
