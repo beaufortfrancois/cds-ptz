@@ -11,7 +11,7 @@ navigator.mediaDevices.getUserMedia({ video: true }).then(cameraVideoStream => {
 });
 
 // User clicks on video to enter Picture-in-Picture and record display and microphone.
-video.onclick = async _ => {
+video.addEventListener('click', async _ => {
   await pipVideo.requestPictureInPicture();
 
   const screenVideoStream = await navigator.getDisplayMedia({ video: true });
@@ -23,16 +23,16 @@ video.onclick = async _ => {
   ]);
 
   // Record screen video stream and broadcast stream to server
+  // const mediaRecorder = new MediaRecorder(stream, { mimeType, audioBitsPerSecond: 6000, videoBitsPerSecond: 100000});
   const mediaRecorder = new MediaRecorder(stream, { mimeType });
   mediaRecorder.start();
   mediaRecorder.ondataavailable = event => {
-
-    chunks.push(event.blob);
-    appendBuffer();
-//    socket.emit('broadcast', { blob: event.data });
+    if (event.data.size === 0)
+      return;
+    socket.emit('broadcast', { blob: event.data });
   }
   setInterval(_ => mediaRecorder.requestData(), 30);
-}
+}, { once: true });
 
 let chunks = [];
 let isAppendingBuffer = false;
