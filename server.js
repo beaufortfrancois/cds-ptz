@@ -7,7 +7,7 @@ var io = require("socket.io")(server);
 io.on("connection", socket => {
   socket.on("broadcast", data => {
     // Broadcast to all connected clients.
-    io.emit("play", data);
+    io.emit("playback", data);
   });
 });
 

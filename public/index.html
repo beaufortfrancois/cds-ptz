@@ -5,7 +5,24 @@
     <meta charset="utf-8">
     <title>Live Preview</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>video { width: 480px }</style>
+    <style>
+      @media screen and (max-width:480px) {
+        body { max-width: 480px; flex-direction: column; }
+        pre { padding: 0 }
+      }
+      body {
+        max-width: 960px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      video {
+        width: 100%;
+        padding: 4px 0;
+        margin-bottom: 4px;
+      }
+    </style>  
   </head>
   <body>
     <video id="video" controls autoplay muted></video>
