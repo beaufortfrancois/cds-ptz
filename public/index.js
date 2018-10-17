@@ -1,5 +1,9 @@
 const socket = io();
+
 const mimeType = 'video/webm; codecs=vp9,opus';
+
+
+/* Recording */
 
 const pipVideo = document.createElement('video');
 pipVideo.autoplay = true;
@@ -10,6 +14,7 @@ navigator.mediaDevices.getUserMedia({ video: true }).then(cameraVideoStream => {
   pipVideo.srcObject = cameraVideoStream;
 });
 
+let isFirstChunk = true;
 // User clicks on video to enter Picture-in-Picture and record display and microphone.
 video.addEventListener('click', async _ => {
   await pipVideo.requestPictureInPicture();
@@ -24,14 +29,12 @@ video.addEventListener('click', async _ => {
 
   // Record screen video stream and broadcast stream to server
   const mediaRecorder = new MediaRecorder(stream, { mimeType, audioBitsPerSecond: 6000, videoBitsPerSecond: 100000});
-  // const mediaRecorder = new MediaRecorder(stream, { mimeType });
-  mediaRecorder.start();
+  mediaRecorder.start(30 /* timeslice */);
   mediaRecorder.ondataavailable = event => {
     if (event.data.size === 0)
       return;
-    socket.emit('broadcast', { blob: event.data });
+    socket.emit('broadcast', { blob: event.data, isFirstChunk });
   }
-  setInterval(_ => mediaRecorder.requestData(), 30);
 }, { once: true });
 
 
@@ -44,7 +47,8 @@ const mediaSource = new MediaSource();
 video.src = URL.createObjectURL(mediaSource);
 mediaSource.onsourceopen = _ => {
   const sourceBuffer = mediaSource.addSourceBuffer(mimeType);
-  
+  sourceBuffer.mode = 'sequence';
+
   socket.on('playback', event => {
     chunks.push(event.blob);
     appendBuffer();
