@@ -1,5 +1,4 @@
 const socket = io();
-
 const mimeType = 'video/webm; codecs=vp9,opus';
 
 
@@ -9,7 +8,6 @@ const pipVideo = document.createElement('video');
 pipVideo.autoplay = true;
 pipVideo.muted = true;
 /* BUG */ pipVideo.style.width = '1px'; document.body.appendChild(pipVideo);
-
 navigator.mediaDevices.getUserMedia({ video: true }).then(cameraVideoStream => {
   pipVideo.srcObject = cameraVideoStream;
 });
