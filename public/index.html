@@ -5,8 +5,7 @@
     <meta charset="utf-8">
     <title>Picture-in-Picture & Screen Capture</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-<!--     <meta name="theme-color" content="#ffd700"> -->
-    <meta name="theme-color" content="#000000">
+    <meta name="theme-color" content="#322e22">
     <style>
       html, body {
         height: 100vh;
@@ -44,7 +43,14 @@
   <body>
     <h1>Picture-in-Picture & <span>Screen Capture Demo</span></h1>
     <video id="video" autoplay muted intrinsicSize="16x9"></video>
-    <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+    <pre>Chrome Canary flags required: 
+
+<i></i>#enable-experimental-web-platform-features
+#enable-surfaces-for-videos
+#enable-surfaces-for-videos-ms
+
+    </pre>
+   <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
     <script src="index.js"></script>
   </body>
 </html>
