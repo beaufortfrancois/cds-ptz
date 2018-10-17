@@ -54,6 +54,7 @@ mediaSource.onsourceopen = _ => {
     if (!document.pictureInPictureElement && !video.controls) {
       video.addEventListener('playing', _ => { video.controls = true }, { once : true }  );
     }
+    video.classList.add('playing');
   });
 
   function appendBuffer() {

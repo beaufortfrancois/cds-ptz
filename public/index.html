@@ -7,13 +7,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#322e22">
     <style>
+      @media screen and (max-width:480px) {
+        body { max-width: 480px; flex-direction: column; }
+        pre { padding: 0 }
+      }
       html, body {
         height: 100%;
       }
       body {
-        background-color: red;
-        background-repeat: no-repeat
         background: linear-gradient(gold, orange);
+        background-color: orange;
+        background-repeat: no-repeat;
         max-width: 960px;
         margin: 0 auto;
         display: flex;
@@ -31,7 +35,7 @@
         white-space: nowrap;
       }
       #video {
-        width: 100%;
+        width: calc(100% - 8px);
         background-image: url('https://developer.chrome.com/devsummit/static/images/lines/link-videos.svg');
         background-repeat: no-repeat;
         background-position: 24px;
@@ -41,14 +45,11 @@
         background: #322e22;
       }
       pre {
-/*         position: absolute; */
-        bottom: 0;
-        left: 0;
+        padding-top: 64px;
         width: 100%;
         color: #322e22;
         margin: 0;
       }
-
     </style>  
   </head>
   <body>
