@@ -38,18 +38,27 @@
       #video.playing {
         background: #322e22;
       }
+      pre {
+        position: absolute;
+        top: 0;
+        left: 0;
+        white-space: pre-wrap;
+        width: 100%;
+        padding: 0;
+color: darkorange;
+        margin: 0;
+      }
+
     </style>  
   </head>
   <body>
+    <pre>
+  #enable-experimental-web-platform-features
+  #enable-surfaces-for-videos
+  #enable-surfaces-for-videos-ms
+</pre>
     <h1>Picture-in-Picture & <span>Screen Capture Demo</span></h1>
     <video id="video" autoplay muted intrinsicSize="16x9"></video>
-    <pre>Chrome Canary flags required: 
-
-<i></i>#enable-experimental-web-platform-features
-#enable-surfaces-for-videos
-#enable-surfaces-for-videos-ms
-
-    </pre>
    <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
     <script src="index.js"></script>
   </body>
