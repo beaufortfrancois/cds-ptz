@@ -13,7 +13,9 @@ navigator.mediaDevices.getUserMedia({ video: true }).then(cameraVideoStream => {
 });
 
 // User clicks on video to enter Picture-in-Picture and record display and microphone.
-video.addEventListener('click', async _ => {
+video.addEventListener('click', onVideoClick);
+
+async function onVideoClick() {
   await pipVideo.requestPictureInPicture();
 
   const screenVideoStream = await navigator.getDisplayMedia({ video: true });
@@ -32,8 +34,10 @@ video.addEventListener('click', async _ => {
       return;
     socket.emit('broadcast', { blob: event.data });
   }
+  
   video.classList.add('playing');
-}, { once: true });
+  video.removeEventListener('click', onVideoClick);
+}
 
 
 /* Playback video */
@@ -55,6 +59,7 @@ mediaSource.onsourceopen = _ => {
       video.addEventListener('playing', _ => { video.controls = true }, { once : true }  );
     }
     video.classList.add('playing');
+    video.removeEventListener('click', onVideoClick);
   });
 
   function appendBuffer() {
@@ -65,6 +70,3 @@ mediaSource.onsourceopen = _ => {
     sourceBuffer.addEventListener('updateend', appendBuffer, { once: true });
   }
 }
-
-
-      // video.addEventListener('loadedmetadata', _ => { video.style.background = 'black'; }, { once : true }  );
