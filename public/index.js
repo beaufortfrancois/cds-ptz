@@ -32,6 +32,7 @@ video.addEventListener('click', async _ => {
       return;
     socket.emit('broadcast', { blob: event.data });
   }
+  video.classList.add('playing');
 }, { once: true });
 
 
@@ -62,6 +63,7 @@ mediaSource.onsourceopen = _ => {
     sourceBuffer.appendBuffer(chunks.shift());
     sourceBuffer.addEventListener('updateend', appendBuffer, { once: true });
   }
-
-
 }
+
+
+      // video.addEventListener('loadedmetadata', _ => { video.style.background = 'black'; }, { once : true }  );
