@@ -38,35 +38,30 @@ video.addEventListener('click', async _ => {
 /* Playback video */
 
 let chunks = [];
-let isAppendingBuffer = false;
 
 // Receive video stream from server and play it back.
 const mediaSource = new MediaSource();
 video.src = URL.createObjectURL(mediaSource);
 mediaSource.onsourceopen = _ => {
-  mediaSource.addSourceBuffer(mimeType);
-
+  const sourceBuffer = mediaSource.addSourceBuffer(mimeType);
+  
   socket.on('playback', event => {
-    if (!document.pictureInPictureElement && !video.controls) {
-      video.controls = true;
-      video.play();
-    }
     chunks.push(event.blob);
     appendBuffer();
+
+    // Add controls to unmute video.
+    if (!document.pictureInPictureElement && !video.controls) {
+      video.controls = true;
+    }
   });
-}
 
-function appendBuffer() {
-  if (chunks.length === 0 || isAppendingBuffer)
-    return;
-  const blob = chunks.shift();
-  const sourceBuffer = mediaSource.sourceBuffers[0];
-  sourceBuffer.appendBuffer(blob);
-  isAppendingBuffer = true;
-  sourceBuffer.addEventListener('updateend', function() {
-    isAppendingBuffer = false;
-    appendBuffer();
-  }, { once: true });
+  function appendBuffer() {
+    if (sourceBuffer.updating || chunks.length === 0)
+      return;
+
+    sourceBuffer.appendBuffer(chunks.shift());
+    sourceBuffer.addEventListener('updateend', appendBuffer, { once: true });
+  }
+
 
 }
-
