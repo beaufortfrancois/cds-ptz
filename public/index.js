@@ -35,8 +35,7 @@ async function onVideoClick() {
     socket.emit('broadcast', { blob: event.data });
   }
   
-  video.classList.add('playing');
-  video.removeEventListener('click', onVideoClick);
+  cleanup();
 }
 
 
@@ -58,8 +57,7 @@ mediaSource.onsourceopen = _ => {
     if (!document.pictureInPictureElement && !video.controls) {
       video.addEventListener('playing', _ => { video.controls = true }, { once : true }  );
     }
-    video.classList.add('playing');
-    video.removeEventListener('click', onVideoClick);
+    cleanup();
   });
 
   function appendBuffer() {
@@ -69,4 +67,11 @@ mediaSource.onsourceopen = _ => {
     sourceBuffer.appendBuffer(chunks.shift());
     sourceBuffer.addEventListener('updateend', appendBuffer, { once: true });
   }
+}
+
+/* Utils */
+
+function cleanup() {
+  video.classList.add('playing');
+  video.removeEventListener('click', onVideoClick);
 }
