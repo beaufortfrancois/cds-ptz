@@ -34,6 +34,9 @@ video.addEventListener('click', async _ => {
   setInterval(_ => mediaRecorder.requestData(), 30);
 }, { once: true });
 
+
+/* Playback video */
+
 let chunks = [];
 let isAppendingBuffer = false;
 
