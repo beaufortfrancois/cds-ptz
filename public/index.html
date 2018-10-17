@@ -8,9 +8,11 @@
     <meta name="theme-color" content="#322e22">
     <style>
       html, body {
-        height: 100vh;
+        height: 100%;
       }
       body {
+        background-color: red;
+        background-repeat: no-repeat
         background: linear-gradient(gold, orange);
         max-width: 960px;
         margin: 0 auto;
@@ -39,27 +41,25 @@
         background: #322e22;
       }
       pre {
-        position: absolute;
-        top: 0;
+/*         position: absolute; */
+        bottom: 0;
         left: 0;
-        white-space: pre-wrap;
         width: 100%;
-        padding: 0;
-color: darkorange;
+        color: #322e22;
         margin: 0;
       }
 
     </style>  
   </head>
   <body>
+    <h1>Picture-in-Picture & <span>Screen Capture Demo</span></h1>
+    <video id="video" autoplay muted intrinsicSize="16x9"></video>
     <pre>
   #enable-experimental-web-platform-features
   #enable-surfaces-for-videos
   #enable-surfaces-for-videos-ms
-</pre>
-    <h1>Picture-in-Picture & <span>Screen Capture Demo</span></h1>
-    <video id="video" autoplay muted intrinsicSize="16x9"></video>
-   <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+    </pre>
+    <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
     <script src="index.js"></script>
   </body>
 </html>
