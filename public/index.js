@@ -27,7 +27,8 @@ async function onVideoClick() {
   ]);
 
   // Record screen video stream and broadcast stream to server
-  const mediaRecorder = new MediaRecorder(stream, { mimeType, audioBitsPerSecond: 6000, videoBitsPerSecond: 100000});
+  // const mediaRecorder = new MediaRecorder(stream, { mimeType, audioBitsPerSecond: 6000, videoBitsPerSecond: 100000});
+  const mediaRecorder = new MediaRecorder(stream, { mimeType });
   mediaRecorder.start(30 /* timeslice */);
   mediaRecorder.ondataavailable = event => {
     if (event.data.size === 0)

@@ -19,7 +19,7 @@
       body {
         background: linear-gradient(gold, orange);
         background-color: orange;
-        background-repeat: no-repeat;
+        background-repeat: repeat-x;
         max-width: 960px;
         margin: 0 auto;
         display: flex;
@@ -47,16 +47,17 @@
         background: #322e22;
       }
       pre {
-        width: 100%;
         color: #322e22;
-        margin: 64px 0 0 0;
+        margin: 24px 12px;
+        white-space: pre-wrap;
       }
     </style>  
   </head>
   <body>
     <h1>Picture-in-Picture & <span>Screen Capture Demo</span></h1>
     <video id="video" autoplay muted intrinsicSize="16x9"></video>
-    <pre>
+    <pre>Enable chrome://flags
+    
   #enable-experimental-web-platform-features
   #enable-surfaces-for-videos
   #enable-surfaces-for-videos-ms</pre>
