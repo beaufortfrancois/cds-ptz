@@ -27,8 +27,8 @@ async function onVideoClick() {
   ]);
 
   // Record screen video stream and broadcast stream to server
-  // const mediaRecorder = new MediaRecorder(stream, { mimeType, audioBitsPerSecond: 6000, videoBitsPerSecond: 100000});
-  const mediaRecorder = new MediaRecorder(stream, { mimeType });
+  // const mediaRecorder = new MediaRecorder(stream, { mimeType });
+  const mediaRecorder = new MediaRecorder(stream, { mimeType, audioBitsPerSecond: 6000, videoBitsPerSecond: 100000});
   mediaRecorder.start(30 /* timeslice */);
   mediaRecorder.ondataavailable = event => {
     if (event.data.size === 0)
@@ -49,7 +49,7 @@ const mediaSource = new MediaSource();
 video.src = URL.createObjectURL(mediaSource);
 mediaSource.onsourceopen = _ => {
   const sourceBuffer = mediaSource.addSourceBuffer(mimeType);
-  
+
   socket.on('playback', event => {
     chunks.push(event.blob);
     appendBuffer();
