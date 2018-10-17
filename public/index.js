@@ -14,7 +14,6 @@ navigator.mediaDevices.getUserMedia({ video: true }).then(cameraVideoStream => {
   pipVideo.srcObject = cameraVideoStream;
 });
 
-let isFirstChunk = true;
 // User clicks on video to enter Picture-in-Picture and record display and microphone.
 video.addEventListener('click', async _ => {
   await pipVideo.requestPictureInPicture();
@@ -27,6 +26,8 @@ video.addEventListener('click', async _ => {
     ...voiceAudioStream.getTracks()
   ]);
 
+  let isFirstChunk = true;
+
   // Record screen video stream and broadcast stream to server
   const mediaRecorder = new MediaRecorder(stream, { mimeType, audioBitsPerSecond: 6000, videoBitsPerSecond: 100000});
   mediaRecorder.start(30 /* timeslice */);
@@ -34,6 +35,7 @@ video.addEventListener('click', async _ => {
     if (event.data.size === 0)
       return;
     socket.emit('broadcast', { blob: event.data, isFirstChunk });
+    isFirstChunk = false;
   }
 }, { once: true });
 
@@ -48,7 +50,18 @@ video.src = URL.createObjectURL(mediaSource);
 mediaSource.onsourceopen = _ => {
   const sourceBuffer = mediaSource.addSourceBuffer(mimeType);
   sourceBuffer.mode = 'sequence';
+  console.log('emit hello');
+  //socket.emit('hello');
 
+  socket.on('hello', event => {
+    chunks.push(event.blob);
+    appendBuffer();
+
+    // Add controls to unmute video.
+    if (!document.pictureInPictureElement && !video.controls) {
+      video.controls = true;
+    }
+  });
   socket.on('playback', event => {
     chunks.push(event.blob);
     appendBuffer();
