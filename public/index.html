@@ -47,6 +47,7 @@
         background: #322e22;
       }
       pre {
+        display: none;
         color: #322e22;
         margin: 24px 12px;
         white-space: pre-wrap;
@@ -56,11 +57,8 @@
   <body>
     <h1>Picture-in-Picture & <span>Screen Capture Demo</span></h1>
     <video id="video" autoplay muted intrinsicSize="16x9"></video>
-    <pre>Enable chrome://flags
-    
-  #enable-experimental-web-platform-features
-  #enable-surfaces-for-videos
-  #enable-surfaces-for-videos-ms</pre>
+  <pre>Enable Canary flag
+#enable-experimental-web-platform-features</pre>
     <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
     <script src="index.js"></script>
   </body>
