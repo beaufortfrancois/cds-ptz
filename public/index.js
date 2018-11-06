@@ -1,12 +1,12 @@
 const socket = io();
 const mimeType = 'video/webm; codecs=vp9,opus';
 
+/* Recording */
+
 // User clicks on video to enter Picture-in-Picture and record display and microphone.
 video.addEventListener('click', onVideoClick);
 
 async function onVideoClick() {
-/* Recording */
-
   const pipVideo = document.createElement('video');
   pipVideo.autoplay = true;
   pipVideo.muted = true;
