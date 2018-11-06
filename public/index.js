@@ -3,10 +3,12 @@ const mimeType = 'video/webm; codecs=vp9,opus';
 
 /* Recording */
 
-// User clicks on video to enter Picture-in-Picture and record display and microphone.
-video.addEventListener('click', onVideoClick);
+let stream;
 
-async function onVideoClick() {
+// User clicks on video to enter Picture-in-Picture and record display and microphone.
+video.addEventListener('click', onVideoFirstClick);
+
+async function onVideoFirstClick() {
   const pipVideo = document.createElement('video');
   pipVideo.autoplay = true;
   pipVideo.muted = true;
@@ -18,27 +20,25 @@ async function onVideoClick() {
   const screenVideoStream = await navigator.getDisplayMedia({ video: true });
   const voiceAudioStream  = await navigator.mediaDevices.getUserMedia({ audio: true });
 
-  const stream = new MediaStream([
+  stream = new MediaStream([
     ...screenVideoStream.getTracks(),
     ...voiceAudioStream.getTracks()
   ]);
-  
-  // Delay recording a bit
-  setTimeout(_ => {
 
-    // Record screen video stream and broadcast stream to server
-    const mediaRecorder = new MediaRecorder(stream, { mimeType });
-    // const mediaRecorder = new MediaRecorder(stream, { mimeType, audioBitsPerSecond: 6000, videoBitsPerSecond: 100000});
-    mediaRecorder.start(30 /* timeslice */);
-    mediaRecorder.ondataavailable = event => {
-      if (event.data.size === 0)
-        return;
-      socket.emit('broadcast', { blob: event.data });
-    }
+  video.removeEventListener('click', onVideoFirstClick);
+  video.addEventListener('click', onVideoSecondClick, { once: true });
+}
 
-    cleanup();
-
-  }, 3000);
+async function onVideoSecondClick() {
+  // Record screen video stream and broadcast stream to server
+  const mediaRecorder = new MediaRecorder(stream, { mimeType });
+  // const mediaRecorder = new MediaRecorder(stream, { mimeType, audioBitsPerSecond: 6000, videoBitsPerSecond: 100000});
+  mediaRecorder.start(30 /* timeslice */);
+  mediaRecorder.ondataavailable = event => {
+    if (event.data.size === 0)
+      return;
+    socket.emit('broadcast', { blob: event.data });
+  }
 }
 
 
