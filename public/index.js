@@ -25,18 +25,12 @@ async function onVideoFirstClick() {
     ...voiceAudioStream.getTracks()
   ]);
   
-  video.classList.add('broadcasting');
+  document.body.classList.add('broadcasting');
   video.removeEventListener('click', onVideoFirstClick);
-  document.addEventListener('visibilitychange', onVisibilityChange);
+  video.addEventListener('click', onVideoSecondClick, { once: true });
 }
 
-async function onVisibilityChange() {
-console.log(document.visibilityState);
-  if (document.visibilityState !== 'hidden') {
-    return;
-  }  
-  document.removeEventListener('visibilitychange', onVisibilityChange);
-
+async function onVideoSecondClick() {
   // Record screen video stream and broadcast stream to server
   const mediaRecorder = new MediaRecorder(stream, { mimeType });
   // const mediaRecorder = new MediaRecorder(stream, { mimeType, audioBitsPerSecond: 6000, videoBitsPerSecond: 100000});
@@ -67,7 +61,7 @@ mediaSource.onsourceopen = _ => {
     if (!document.pictureInPictureElement && !video.controls) {
       video.addEventListener('playing', _ => { video.controls = true }, { once : true }  );
     }
-    video.classList.add('playing');
+    document.body.classList.add('playing');
     video.removeEventListener('click', onVideoFirstClick);
   });
 

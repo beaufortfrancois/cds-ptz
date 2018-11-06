@@ -41,11 +41,14 @@
         background-position: 24px;
         max-height: calc(100vh - 88px)
       }
-      #video.playing {
+      body.playing video {
         background: #322e22;
       }
-      #video.broadcasting {
-        opacity: 0.2;
+      body.broadcasting {
+        background: #322e22;
+      }
+      body.broadcasting video {
+        background: #322e22 !important;
       }
       pre {
         display: none;
