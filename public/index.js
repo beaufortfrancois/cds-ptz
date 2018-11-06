@@ -39,7 +39,7 @@ async function onVideoClick() {
 
     cleanup();
 
-  }, 2000);
+  }, 3000);
 }
 
 
