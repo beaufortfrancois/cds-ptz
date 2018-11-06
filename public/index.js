@@ -9,7 +9,10 @@ async function onVideoClick() {
 
   const pipVideo = document.createElement('video');
   pipVideo.autoplay = true;
-  pipVideo.srcObject = await navigator.mediaDevices.getUserMedia({ video: true });
+  pipVideo.muted = true;
+  pipVideo.srcObject = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+  pipVideo.play(); // because of muted... ;(
+  // Requires User Activation V2 (chrome://flags/#user-activation-v2)
   pipVideo.onloadedmetadata = _ => pipVideo.requestPictureInPicture();
 
   const screenVideoStream = await navigator.getDisplayMedia({ video: true });
