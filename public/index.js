@@ -24,12 +24,19 @@ async function onVideoFirstClick() {
     ...screenVideoStream.getTracks(),
     ...voiceAudioStream.getTracks()
   ]);
-
+  
+  video.classList.add('broadcasting');
   video.removeEventListener('click', onVideoFirstClick);
-  video.addEventListener('click', onVideoSecondClick, { once: true });
+  document.addEventListener('visibilitychange', onVisibilityChange);
 }
 
-async function onVideoSecondClick() {
+async function onVisibilityChange() {
+console.log(document.visibilityState);
+  if (document.visibilityState !== 'hidden') {
+    return;
+  }  
+  document.removeEventListener('visibilitychange', onVisibilityChange);
+
   // Record screen video stream and broadcast stream to server
   const mediaRecorder = new MediaRecorder(stream, { mimeType });
   // const mediaRecorder = new MediaRecorder(stream, { mimeType, audioBitsPerSecond: 6000, videoBitsPerSecond: 100000});
@@ -60,7 +67,8 @@ mediaSource.onsourceopen = _ => {
     if (!document.pictureInPictureElement && !video.controls) {
       video.addEventListener('playing', _ => { video.controls = true }, { once : true }  );
     }
-    cleanup();
+    video.classList.add('playing');
+    video.removeEventListener('click', onVideoFirstClick);
   });
 
   function appendBuffer() {
@@ -70,11 +78,4 @@ mediaSource.onsourceopen = _ => {
     sourceBuffer.appendBuffer(chunks.shift());
     sourceBuffer.addEventListener('updateend', appendBuffer, { once: true });
   }
-}
-
-/* Utils */
-
-function cleanup() {
-  video.classList.add('playing');
-  video.removeEventListener('click', onVideoClick);
 }
