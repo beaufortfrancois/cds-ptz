@@ -6,8 +6,6 @@ const mimeType = 'video/webm; codecs=vp9,opus';
 
 const pipVideo = document.createElement('video');
 pipVideo.autoplay = true;
-pipVideo.muted = true;
-/* BUG */ pipVideo.style.width = '1px'; document.body.appendChild(pipVideo);
 navigator.mediaDevices.getUserMedia({ video: true }).then(cameraVideoStream => {
   pipVideo.srcObject = cameraVideoStream;
 });
@@ -25,18 +23,23 @@ async function onVideoClick() {
     ...screenVideoStream.getTracks(),
     ...voiceAudioStream.getTracks()
   ]);
-
-  // Record screen video stream and broadcast stream to server
-  // const mediaRecorder = new MediaRecorder(stream, { mimeType });
-  const mediaRecorder = new MediaRecorder(stream, { mimeType, audioBitsPerSecond: 6000, videoBitsPerSecond: 100000});
-  mediaRecorder.start(30 /* timeslice */);
-  mediaRecorder.ondataavailable = event => {
-    if (event.data.size === 0)
-      return;
-    socket.emit('broadcast', { blob: event.data });
-  }
   
-  cleanup();
+  // Delay recording a bit
+  setTimeout(_ => {
+
+    // Record screen video stream and broadcast stream to server
+    // const mediaRecorder = new MediaRecorder(stream, { mimeType });
+    const mediaRecorder = new MediaRecorder(stream, { mimeType, audioBitsPerSecond: 6000, videoBitsPerSecond: 100000});
+    mediaRecorder.start(30 /* timeslice */);
+    mediaRecorder.ondataavailable = event => {
+      if (event.data.size === 0)
+        return;
+      socket.emit('broadcast', { blob: event.data });
+    }
+
+    cleanup();
+
+  }, 3000);
 }
 
 
