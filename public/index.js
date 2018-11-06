@@ -28,8 +28,8 @@ async function onVideoClick() {
   setTimeout(_ => {
 
     // Record screen video stream and broadcast stream to server
-    // const mediaRecorder = new MediaRecorder(stream, { mimeType });
-    const mediaRecorder = new MediaRecorder(stream, { mimeType, audioBitsPerSecond: 6000, videoBitsPerSecond: 100000});
+    const mediaRecorder = new MediaRecorder(stream, { mimeType });
+    // const mediaRecorder = new MediaRecorder(stream, { mimeType, audioBitsPerSecond: 6000, videoBitsPerSecond: 100000});
     mediaRecorder.start(30 /* timeslice */);
     mediaRecorder.ondataavailable = event => {
       if (event.data.size === 0)
@@ -39,7 +39,7 @@ async function onVideoClick() {
 
     cleanup();
 
-  }, 3000);
+  }, 2000);
 }
 
 
