@@ -17,7 +17,8 @@ async function onVideoFirstClick() {
   // Requires User Activation V2 (chrome://flags/#user-activation-v2)
   pipVideo.onloadedmetadata = _ => pipVideo.requestPictureInPicture();
 
-  const screenVideoStream = await navigator.getDisplayMedia({ video: true });
+  // const screenVideoStream = await navigator.getDisplayMedia({ video: true });
+  const screenVideoStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
   const voiceAudioStream  = await navigator.mediaDevices.getUserMedia({ audio: true });
 
   stream = new MediaStream([
