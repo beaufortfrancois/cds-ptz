@@ -10,15 +10,12 @@ async function getUserMedia() {
     video: { width: 160, height: 120, pan: true, tilt: true, zoom: true }
   });
 
-  // video.srcObject = stream;
-
   // Record screen video stream and broadcast stream to server
   const mediaRecorder = new MediaRecorder(stream, {
     mimeType,
     videoBitsPerSecond: 100000
   });
-  // const mediaRecorder = new MediaRecorder(stream, { mimeType });
-  mediaRecorder.start(30 /* timeslice */);
+  mediaRecorder.start(1000 /* timeslice */);
   mediaRecorder.ondataavailable = event => {
     if (event.data.size === 0) return;
     socket.emit("broadcast", { blob: event.data });
@@ -36,14 +33,17 @@ mediaSource.addEventListener(
   "sourceopen",
   () => {
     const sourceBuffer = mediaSource.addSourceBuffer(mimeType);
+    sourceBuffer.mode = 'sequence';
     console.log(sourceBuffer);
 
     socket.on("playback", event => {
+      console.log(`video.currentTime: ${video.currentTime}`);
+      console.log(`video.duration: ${video.duration}`);
+      console.log(`mediaSource.duration: ${mediaSource.duration}`);
+      // if (video.duration) video.currentTime = video.duration;
       console.log("playback");
       chunks.push(event.blob);
       appendBuffer();
-
-      document.body.classList.add("playing");
     });
 
     function appendBuffer() {
