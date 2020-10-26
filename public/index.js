@@ -9,7 +9,6 @@ async function getUserMedia() {
   stream = await navigator.mediaDevices.getUserMedia({
     video: { width: 160, height: 120, pan: true, tilt: true, zoom: true }
   });
-
   // Record screen video stream and broadcast stream to server
   const mediaRecorder = new MediaRecorder(stream, {
     mimeType,
@@ -33,8 +32,7 @@ socket.on("camera", event => {
   if (event.pan) panTiltZoom.pan = event.pan;
   if (event.tilt) panTiltZoom.tilt = event.tilt;
   if (event.zoom) panTiltZoom.zoom = event.zoom;
-  const [track] = stream.getVideoTracks();
-  track.applyConstraints({ advanced: [panTiltZoom] });
+  stream.getVideoTracks()[0].applyConstraints({ advanced: [panTiltZoom] });
 });
 
 /* Playback video */
