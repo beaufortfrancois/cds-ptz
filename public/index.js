@@ -7,13 +7,17 @@ let stream;
 
 async function getUserMedia() {
   stream = await navigator.mediaDevices.getUserMedia({
-    video: { pan: true, tilt: true, zoom: true }
+    video: { width: 160, height: 120, pan: true, tilt: true, zoom: true }
   });
-  
+
   // video.srcObject = stream;
 
   // Record screen video stream and broadcast stream to server
-  const mediaRecorder = new MediaRecorder(stream, { mimeType });
+  const mediaRecorder = new MediaRecorder(stream, {
+    mimeType,
+    videoBitsPerSecond: 100000
+  });
+  // const mediaRecorder = new MediaRecorder(stream, { mimeType });
   mediaRecorder.start(30 /* timeslice */);
   mediaRecorder.ondataavailable = event => {
     if (event.data.size === 0) return;
@@ -35,18 +39,19 @@ mediaSource.addEventListener(
     console.log(sourceBuffer);
 
     socket.on("playback", event => {
+      console.log("playback");
       chunks.push(event.blob);
-      // appendBuffer();
+      appendBuffer();
 
       document.body.classList.add("playing");
     });
 
-//     function appendBuffer() {
-//       if (sourceBuffer.updating || chunks.length === 0) return;
+    function appendBuffer() {
+      if (sourceBuffer.updating || chunks.length === 0) return;
 
-//       sourceBuffer.appendBuffer(chunks.shift());
-//       sourceBuffer.addEventListener("updateend", appendBuffer, { once: true });
-//     }
+      sourceBuffer.appendBuffer(chunks.shift());
+      sourceBuffer.addEventListener("updateend", appendBuffer, { once: true });
+    }
   },
   { once: true }
 );
