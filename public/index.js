@@ -39,29 +39,14 @@ socket.on("camera", event => {
 
 /* Playback video */
 
-let chunks = [];
-
-// Receive video stream from server and play it back.
 const mediaSource = new MediaSource();
 video.src = URL.createObjectURL(mediaSource);
-mediaSource.addEventListener(
-  "sourceopen",
-  () => {
-    const sourceBuffer = mediaSource.addSourceBuffer(mimeType);
-    sourceBuffer.mode = "sequence";
+mediaSource.onsourceopen = () => {
+  const sourceBuffer = mediaSource.addSourceBuffer(mimeType);
+  sourceBuffer.mode = "sequence";
 
-    socket.on("playback", event => {
-      console.log("playback");
-      chunks.push(event.blob);
-      appendBuffer();
-    });
-
-    function appendBuffer() {
-      if (sourceBuffer.updating || chunks.length === 0) return;
-
-      sourceBuffer.appendBuffer(chunks.shift());
-      // sourceBuffer.addEventListener("updateend", appendBuffer, { once: true });
-    }
-  },
-  { once: true }
-);
+  socket.on("playback", event => {
+    // Receive video stream from server and play it back.
+    if (!sourceBuffer.updating) sourceBuffer.appendBuffer(event.blob);
+  });
+};
