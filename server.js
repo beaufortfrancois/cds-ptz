@@ -7,7 +7,8 @@ var io = require("socket.io")(server);
 io.on("connection", socket => {
   socket.on("broadcast", data => {
     // Broadcast to all connected clients.
-    io.emit("playback", data);
+    if (data.blob) io.emit("playback", data);
+    if (data.pan || data.tilt || data.zoom) io.emit("camera", data);
   });
 });
 
