@@ -8,9 +8,9 @@ let firstBlob;
 let shouldSaveFirstBlob = false;
 
 io.on("connection", socket => {
-  if (firstBlob) {
-    socket.emit("playback", { blob: firstBlob });
-  }
+  // if (firstBlob) {
+  //   socket.emit("playback", { blob: firstBlob });
+  // }
   socket.on("broadcast", data => {
     if (data.start) {
       shouldSaveFirstBlob = true;
@@ -23,7 +23,8 @@ io.on("connection", socket => {
       }
       io.emit("playback", data);
     }
-    if (data.pan || data.tilt || data.zoom) io.emit("camera", data);
+    if ("pan" in data || "tilt" in data || "zoom" in data)
+      socket.emit("camera", data);
   });
 });
 

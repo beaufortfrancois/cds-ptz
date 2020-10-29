@@ -14,7 +14,7 @@ async function getUserMedia() {
     mimeType,
     videoBitsPerSecond: 100000
   });
-  mediaRecorder.start(500 /* timeslice */);
+  mediaRecorder.start(200 /* timeslice */);
   mediaRecorder.ondataavailable = event => {
     socket.emit("broadcast", { blob: event.data });
   };
@@ -27,12 +27,11 @@ function ptz(pan, tilt, zoom) {
 }
 
 socket.on("camera", event => {
-  console.log("camera");
-  const panTiltZoom = {};
-  if (event.pan) panTiltZoom.pan = event.pan;
-  if (event.tilt) panTiltZoom.tilt = event.tilt;
-  if (event.zoom) panTiltZoom.zoom = event.zoom;
-  stream.getVideoTracks()[0].applyConstraints({ advanced: [panTiltZoom] });
+  const constraint = {};
+  ["pan", "tilt", "zoom"].forEach(ptz => {
+    if (ptz in event) constraint[ptz] = event[ptz];
+  });
+  stream.getVideoTracks()[0].applyConstraints({ advanced: [constraint] });
 });
 
 /* Playback video */
