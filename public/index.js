@@ -14,13 +14,32 @@ getUserMediaButton.onclick = async () => {
     mimeType,
     videoBitsPerSecond: 100000
   });
-  mediaRecorder.start(200 /* timeslice */);
+  mediaRecorder.start(1000 /* timeslice */);
   mediaRecorder.ondataavailable = event => {
     socket.emit("broadcast", { blob: event.data });
   };
+
+  const [videoTrack] = stream.getVideoTracks();
+  const {pan, tilt, zoom} = videoTrack.getSettings();
+  socket.emit("settings", {
+    pan: ,
+    tilt:,
+    zoom: settings.zoom
+  });
+
+  // const capabilities = videoTrack.getCapabilities();
 };
 
 /* Camera PTZ */
+
+socket.on("settings", event => {
+  if ("pan",)
+  const constraint = {};
+  ["pan", "tilt", "zoom"].forEach(ptz => {
+    if (ptz in event) constraint[ptz] = event[ptz];
+  });
+  stream.getVideoTracks()[0].applyConstraints({ advanced: [constraint] });
+});
 
 function ptz(pan, tilt, zoom) {
   socket.emit("camera", { pan, tilt, zoom });

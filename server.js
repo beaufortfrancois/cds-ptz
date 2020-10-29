@@ -16,6 +16,10 @@ io.on("connection", socket => {
     // Send new camera values to the video streaming socket client.
     videoStreamingSocket.emit("camera", data);
   });
+  socket.on("settings", data => {
+    // Broadcast ptz settings to all connected clients.
+    io.emit("settings", data);
+  });
 });
 
 app.use(express.static("public"));
