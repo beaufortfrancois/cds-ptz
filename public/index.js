@@ -10,8 +10,8 @@ getUserMediaButton.onclick = async () => {
     video: { width: 160, height: 120, pan: true, tilt: true, zoom: true }
   });
   const mediaRecorder = new MediaRecorder(stream, {
-    mimeType,
-    videoBitsPerSecond: 100000
+    mimeType
+    // videoBitsPerSecond: 100000
   });
   mediaRecorder.start(1000 /* timeslice */);
   mediaRecorder.ondataavailable = event => {
@@ -69,6 +69,7 @@ socket.on("camera", event => {
 const mediaSource = new MediaSource();
 video.src = URL.createObjectURL(mediaSource);
 mediaSource.onsourceopen = () => {
+  console.log("onsourceopen");
   const sourceBuffer = mediaSource.addSourceBuffer(mimeType);
   sourceBuffer.mode = "sequence";
 
