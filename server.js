@@ -8,6 +8,7 @@ let videoStreamingSocket;
 
 io.on("connection", socket => {
   socket.on("broadcast", data => {
+    if (videoStreamingSocket) videoStreamingSocket.disconnect(true);
     videoStreamingSocket = socket;
     // Broadcast video stream to all connected clients.
     io.emit("playback", data);
@@ -25,5 +26,9 @@ io.on("connection", socket => {
     io.emit("capabilities", data);
   });
 });
+
+io.on("disconnection", _ => {
+})
+
 
 app.use(express.static("public"));
