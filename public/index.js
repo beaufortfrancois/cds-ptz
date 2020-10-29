@@ -14,7 +14,7 @@ async function getUserMedia() {
     mimeType,
     videoBitsPerSecond: 100000
   });
-  mediaRecorder.start(200 /* timeslice */);
+  mediaRecorder.start(500 /* timeslice */);
   mediaRecorder.ondataavailable = event => {
     socket.emit("broadcast", { blob: event.data });
   };

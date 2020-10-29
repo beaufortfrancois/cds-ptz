@@ -9,7 +9,7 @@ let shouldSaveFirstBlob = false;
 
 io.on("connection", socket => {
   if (firstBlob) {
-    socket.emit("playback", { data: firstBlob });
+    socket.emit("playback", { blob: firstBlob });
   }
   socket.on("broadcast", data => {
     if (data.start) {
