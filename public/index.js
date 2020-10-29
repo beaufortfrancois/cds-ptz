@@ -3,7 +3,7 @@ const mimeType = "video/webm; codecs=vp9";
 
 /* Recording */
 
-let stream;
+let videoTrack;
 
 getUserMediaButton.onclick = async () => {
   stream = await navigator.mediaDevices.getUserMedia({
@@ -19,7 +19,7 @@ getUserMediaButton.onclick = async () => {
     socket.emit("broadcast", { blob: event.data });
   };
 
-  const [videoTrack] = stream.getVideoTracks();
+  [videoTrack] = stream.getVideoTracks();
   {
     const { pan, tilt, zoom } = videoTrack.getSettings();
     socket.emit("settings", { pan, tilt, zoom });
@@ -62,11 +62,7 @@ zoom.oninput = () => {
 };
 
 socket.on("camera", event => {
-  const constraint = {};
-  ["pan", "tilt", "zoom"].forEach(ptz => {
-    if (ptz in event) constraint[ptz] = event[ptz];
-  });
-  stream.getVideoTracks()[0].applyConstraints({ advanced: [constraint] });
+  videoTrack.applyConstraints({ advanced: [event] });
 });
 
 /* Playback video */
@@ -80,6 +76,5 @@ mediaSource.onsourceopen = () => {
   socket.on("playback", event => {
     // Receive video stream from server and play it back.
     if (!sourceBuffer.updating) sourceBuffer.appendBuffer(event.blob);
-    getUserMediaButton.hidden = true;
   });
 };
