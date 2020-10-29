@@ -7,23 +7,25 @@
     <style>
       body {
         margin: 0 auto;
+        text-align: center;
       }
       #video {
         width: 100%;
+        background: #333;
+      }
+      button, input {
+        display: block;
+        margin: 1em auto;
       }
     </style>
   </head>
   <body>
-    <button id="getUserMediaButton">
-      Start streaming
-    </button>
-    <div id="controls">
-      <input type="range" id="pan" disabled />
-      <input type="range" id="tilt" disabled />
-      <input type="range" id="zoom" disabled />
-    </div>
-
     <video id="video" autoplay muted></video>
+    <button id="getUserMediaButton">Stream</button>
+    <input type="range" id="pan" disabled />
+    <input type="range" id="tilt" disabled />
+    <input type="range" id="zoom" disabled />
+
     <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
     <script src="index.js"></script>
   </body>

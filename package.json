@@ -1,7 +1,7 @@
 {
-  "name": "live-recording",
+  "name": "cds-ptz",
   "version": "0.0.1",
-  "description": "Picture-in-Picture & Screen Capture Demo",
+  "description": "Demo of PTZ remote",
   "scripts": {
     "start": "node server.js"
   },
@@ -13,7 +13,7 @@
     "node": "9.x"
   },
   "repository": {
-    "url": "https://glitch.com/edit/#!/bone-lizard"
+    "url": "https://glitch.com/edit/#!/cds-ptz"
   },
   "license": "MIT",
   "keywords": [

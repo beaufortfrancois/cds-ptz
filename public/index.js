@@ -51,12 +51,15 @@ socket.on("capabilities", event => {
   });
 });
 
-pan.oninput = {
-  ptz()
-}
-function ptz(pan, tilt, zoom) {
-  socket.emit("camera", { pan, tilt, zoom });
-}
+pan.oninput = () => {
+  socket.emit("camera", { pan: pan.value });
+};
+tilt.oninput = () => {
+  socket.emit("camera", { tilt: tilt.value });
+};
+zoom.oninput = () => {
+  socket.emit("camera", { zoom: zoom.value });
+};
 
 socket.on("camera", event => {
   const constraint = {};
