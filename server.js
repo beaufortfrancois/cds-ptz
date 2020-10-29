@@ -29,7 +29,7 @@ io.on("connection", socket => {
     io.emit("capabilities", data);
   });
   socket.on("disconnect", reason => {
-    io.emit("clients", numberOfClientsConnected--);
+    io.emit("clients", --numberOfClientsConnected);
   });
 });
 

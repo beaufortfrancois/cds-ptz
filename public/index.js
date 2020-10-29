@@ -79,9 +79,8 @@ mediaSource.onsourceopen = () => {
   });
 };
 
-/* Users */
-
+/* Clients count */
 
 socket.on("clients", event => {
-  console.log(event);
+  clientsCount.textContent = event;
 });

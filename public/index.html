@@ -14,18 +14,27 @@
         height: calc(100vw * 3 / 4);
         background: #333;
       }
-      button, input {
+      button,
+      input {
         display: block;
         margin: 1em auto;
+      }
+      #clientsCount {
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin: 1em;
+        color: white;
       }
     </style>
   </head>
   <body>
-    <video id="video" autoplay muted ></video>
+    <video id="video" autoplay muted></video>
     <input type="range" id="pan" disabled />
     <input type="range" id="tilt" disabled />
     <input type="range" id="zoom" disabled />
     <button id="getUserMediaButton">Stream</button>
+    <div id="clientsCount"></div>
 
     <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
     <script src="index.js"></script>
