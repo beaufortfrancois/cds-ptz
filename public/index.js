@@ -23,7 +23,7 @@ async function getUserMedia() {
 /* Camera PTZ */
 
 function ptz(pan, tilt, zoom) {
-  socket.emit("broadcast", { pan, tilt, zoom });
+  socket.emit("camera", { pan, tilt, zoom });
 }
 
 socket.on("camera", event => {
