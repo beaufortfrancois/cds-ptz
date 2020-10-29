@@ -6,10 +6,9 @@ const mimeType = "video/webm; codecs=vp9";
 let videoTrack;
 
 getUserMediaButton.onclick = async () => {
-  stream = await navigator.mediaDevices.getUserMedia({
+  const stream = await navigator.mediaDevices.getUserMedia({
     video: { width: 160, height: 120, pan: true, tilt: true, zoom: true }
   });
-  // Record screen video stream and broadcast stream to server
   const mediaRecorder = new MediaRecorder(stream, {
     mimeType,
     videoBitsPerSecond: 100000
