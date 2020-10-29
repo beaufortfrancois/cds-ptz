@@ -4,10 +4,13 @@ var app = express();
 var server = app.listen(8081);
 var io = require("socket.io")(server);
 
-let firstBlob = [];
+let firstBlob;
 let shouldSaveFirstBlob = false;
 
 io.on("connection", socket => {
+  if (firstBlob) {
+    socket.emit("playback", { data: firstBlob });
+  }
   socket.on("broadcast", data => {
     if (data.start) {
       shouldSaveFirstBlob = true;
