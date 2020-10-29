@@ -20,27 +20,40 @@ getUserMediaButton.onclick = async () => {
   };
 
   const [videoTrack] = stream.getVideoTracks();
-  const {pan, tilt, zoom} = videoTrack.getSettings();
-  socket.emit("settings", {
-    pan: ,
-    tilt:,
-    zoom: settings.zoom
-  });
-
-  // const capabilities = videoTrack.getCapabilities();
+  {
+    const { pan, tilt, zoom } = videoTrack.getSettings();
+    socket.emit("settings", { pan, tilt, zoom });
+  }
+  {
+    const { pan, tilt, zoom } = videoTrack.getCapabilities();
+    socket.emit("capabilities", { pan, tilt, zoom });
+  }
 };
 
 /* Camera PTZ */
 
 socket.on("settings", event => {
-  if ("pan",)
-  const constraint = {};
   ["pan", "tilt", "zoom"].forEach(ptz => {
-    if (ptz in event) constraint[ptz] = event[ptz];
+    if (ptz in event) {
+      document.getElementById(ptz).disabled = false;
+      document.getElementById(ptz).value = event[ptz];
+    }
   });
-  stream.getVideoTracks()[0].applyConstraints({ advanced: [constraint] });
 });
 
+socket.on("capabilities", event => {
+  ["pan", "tilt", "zoom"].forEach(ptz => {
+    if (ptz in event) {
+      document.getElementById(ptz).min = event[ptz].min;
+      document.getElementById(ptz).max = event[ptz].max;
+      document.getElementById(ptz).step = event[ptz].step;
+    }
+  });
+});
+
+pan.oninput = {
+  ptz()
+}
 function ptz(pan, tilt, zoom) {
   socket.emit("camera", { pan, tilt, zoom });
 }

@@ -17,30 +17,12 @@
     <button id="getUserMediaButton">
       Start streaming
     </button>
-    <div>
-      <button id="panLeftButton" data-name="pan" disabled>
-        left
-      </button>
-      <button id="panRightButton" data-name="pan" disabled>
-        right
-      </button>
+    <div id="controls">
+      <input type="range" id="pan" disabled />
+      <input type="range" id="tilt" disabled />
+      <input type="range" id="zoom" disabled />
     </div>
-    <div>
-      <button id="tiltDownButton" data-name="tilt" disabled>
-        down
-      </button>
-      <button id="tiltUpButton" data-name="tilt" disabled>
-        up
-      </button>
-    </div>
-    <div>
-      <button id="zoomOutButton" data-name="zoom" disabled>
-        zoom&nbsp;out
-      </button>
-      <button id="zoomInButton" data-name="zoom" disabled>
-        zoom&nbsp;in
-      </button>
-    </div>
+
     <video id="video" autoplay muted></video>
     <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
     <script src="index.js"></script>

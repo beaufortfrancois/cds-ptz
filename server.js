@@ -20,6 +20,10 @@ io.on("connection", socket => {
     // Broadcast ptz settings to all connected clients.
     io.emit("settings", data);
   });
+  socket.on("capabilities", data => {
+    // Broadcast ptz capabilities to all connected clients.
+    io.emit("capabilities", data);
+  });
 });
 
 app.use(express.static("public"));
