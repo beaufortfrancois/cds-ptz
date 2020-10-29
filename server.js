@@ -8,7 +8,8 @@ let videoStreamingSocket;
 let numberOfClientsConnected = 0;
 
 io.on("connection", socket => {
-  io.emit("clients", numberOfClientsConnected++);
+  numberOfClientsConnected++;
+  io.emit("clients", (numberOfClientsConnected - 1));
 
   socket.on("broadcast", data => {
     if (videoStreamingSocket) videoStreamingSocket.disconnect(true);
@@ -29,7 +30,8 @@ io.on("connection", socket => {
     io.emit("capabilities", data);
   });
   socket.on("disconnect", reason => {
-    io.emit("clients", --numberOfClientsConnected);
+    numberOfClientsConnected--;
+    io.emit("clients", (numberOfClientsConnected - 1));
   });
 });
 
