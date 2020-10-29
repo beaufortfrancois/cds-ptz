@@ -5,8 +5,11 @@ var server = app.listen(8081);
 var io = require("socket.io")(server);
 
 let videoStreamingSocket;
+let numberOfClientsConnected = 0;
 
 io.on("connection", socket => {
+  io.emit("clients", numberOfClientsConnected++);
+
   socket.on("broadcast", data => {
     if (videoStreamingSocket) videoStreamingSocket.disconnect(true);
     videoStreamingSocket = socket;
@@ -25,10 +28,9 @@ io.on("connection", socket => {
     // Broadcast ptz capabilities to all connected clients.
     io.emit("capabilities", data);
   });
+  socket.on("disconnect", reason => {
+    io.emit("clients", numberOfClientsConnected--);
+  });
 });
-
-io.on("disconnection", _ => {
-})
-
 
 app.use(express.static("public"));

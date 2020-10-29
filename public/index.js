@@ -78,3 +78,10 @@ mediaSource.onsourceopen = () => {
     if (!sourceBuffer.updating) sourceBuffer.appendBuffer(event.blob);
   });
 };
+
+/* Users */
+
+
+socket.on("clients", event => {
+  console.log(event);
+});
