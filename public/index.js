@@ -31,7 +31,7 @@ function startStreaming() {
     mimeType,
     videoBitsPerSecond: 100000
   });
-  mediaRecorder.start(1000 /* timeslice */);
+  mediaRecorder.start(600 /* timeslice */);
   mediaRecorder.ondataavailable = event => {
     console.log("ondataavailable!");
     socket.emit("broadcast", { blob: event.data });
@@ -76,26 +76,50 @@ socket.on("camera", event => {
 
 /* Playback video */
 
+let pendingBuffers = [];
+let mediaSource;
+let sourceBuffer;
+
 function playVideo() {
   if (video.src) {
     URL.revokeObjectURL(video.src);
     video.src = null;
   }
-  const mediaSource = new MediaSource();
+  mediaSource = new MediaSource();
   video.src = URL.createObjectURL(mediaSource);
   mediaSource.onsourceopen = () => {
     console.log("sourceopen");
-    const sourceBuffer = mediaSource.addSourceBuffer(mimeType);
+    sourceBuffer = mediaSource.addSourceBuffer(mimeType);
     sourceBuffer.mode = "sequence";
 
     socket.on("playback", event => {
-      console.log('playback!', event);
-      bu
+      console.log("playback!", event);
+      pendingBuffers.push(event.blob);
+
       // Receive video stream from server and play it back.
-      if (!sourceBuffer.updating) sourceBuffer.appendBuffer(event.blob);
+      appendBuffer(sourceBuffer);
     });
   };
 }
+
+function appendBuffer() {
+  if (pendingBuffers.length === 0) return;
+  if (sourceBuffer.updating) {
+    setTimeout(_ => {
+      appendBuffer(sourceBuffer);
+    }, 100);
+    return;
+  }
+  try {
+    sourceBuffer.appendBuffer(pendingBuffers[0]);
+    pendingBuffers.shift();
+  } catch (error) {
+    mediaSource.removeSourceBuffer(sourceBuffer);
+    sourceBuffer = mediaSource.addSourceBuffer(mimeType);
+    sourceBuffer.mode = "sequence";
+  }
+}
+
 playVideo();
 
 /* Clients count */
