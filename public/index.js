@@ -41,6 +41,8 @@ function startStreaming() {
     if (containsInitSegment) {
       socket.emit("broadcast", { data, containsInitSegment, date });
     }
+    // mediaRecorder.stop();
+    // setTimeout(startStreaming, 0);
     containsInitSegment = false;
   };
 }
