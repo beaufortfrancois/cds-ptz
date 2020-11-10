@@ -24,15 +24,17 @@ getUserMediaButton.onclick = async () => {
 };
 
 function startStreaming() {
-  console.log('startStreaming');
+  console.log("startStreaming");
   mediaRecorder = new MediaRecorder(stream, {
     mimeType,
     videoBitsPerSecond: 100000
   });
   mediaRecorder.start(1000 /* timeslice */);
   mediaRecorder.ondataavailable = event => {
+    console.log("ondataavailable!");
     socket.emit("broadcast", { blob: event.data });
   };
+  playVideo();
 }
 
 /* Camera PTZ */
@@ -73,24 +75,27 @@ socket.on("camera", event => {
 
 /* Playback video */
 
-const mediaSource = new MediaSource();
-video.src = URL.createObjectURL(mediaSource);
-mediaSource.onsourceopen = () => {
-  const sourceBuffer = mediaSource.addSourceBuffer(mimeType);
-  sourceBuffer.mode = "sequence";
+function playVideo() {
+  const mediaSource = new MediaSource();
+  video.src = URL.createObjectURL(mediaSource);
+  mediaSource.onsourceopen = () => {
+    const sourceBuffer = mediaSource.addSourceBuffer(mimeType);
+    sourceBuffer.mode = "sequence";
 
-  socket.on("playback", event => {
-    // Receive video stream from server and play it back.
-    if (!sourceBuffer.updating) sourceBuffer.appendBuffer(event.blob);
-  });
-};
+    socket.on("playback", event => {
+      // Receive video stream from server and play it back.
+      if (!sourceBuffer.updating) sourceBuffer.appendBuffer(event.blob);
+    });
+  };
+}
+playVideo();
 
 /* Clients count */
 
 socket.on("clients", ({ type, count }) => {
-  console.log('clients', type, count);
-  // if (stream && type === "connect") {
-    // startStreaming();
-  // }
+  console.log("clients", type, count);
+  if (stream && type === "connect") {
+    startStreaming();
+  }
   clientsCount.textContent = count;
 });

@@ -8,7 +8,7 @@ let videoStreamingSocket;
 let numberOfClientsConnected = 0;
 
 io.on("connection", socket => {
-  console.log('connection!');
+  console.log("connection!");
   numberOfClientsConnected++;
   io.emit("clients", {
     type: "connect",
@@ -16,7 +16,7 @@ io.on("connection", socket => {
   });
 
   socket.on("broadcast", data => {
-    if (videoStreamingSocket) videoStreamingSocket.disconnect(true);
+    // if (videoStreamingSocket) videoStreamingSocket.disconnect(true);
     videoStreamingSocket = socket;
     // Broadcast video stream to all connected clients.
     io.emit("playback", data);
