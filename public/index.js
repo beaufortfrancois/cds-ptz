@@ -33,7 +33,7 @@ function startStreaming() {
     videoBitsPerSecond: 100000
   });
   containsInitSegment = true;
-  mediaRecorder.start(600 /* timeslice */);
+  mediaRecorder.start(500 /* timeslice */);
   mediaRecorder.ondataavailable = event => {
     console.log("ondataavailable!");
 
@@ -86,7 +86,7 @@ let mediaSource;
 let sourceBuffer;
 
 socket.on("playback", ({ blob, containsInitSegment }) => {
-  console.log("playback!", { blob, containsInitSegment });
+  console.log("playback!", { containsInitSegment });
   if (containsInitSegment) {
     pendingBuffers = [blob];
     playVideo();
@@ -114,16 +114,19 @@ function playVideo() {
 }
 
 function appendBuffer() {
-  console.log("appendBuffer");
+  console.log("appendBuffer", pendingBuffers);
   if (pendingBuffers.length === 0) return;
   if (!sourceBuffer || sourceBuffer.updating) {
-    setTimeout(_ => appendBuffer, 100);
+    console.log('HEY!', !sourceBuffer, sourceBuffer.updating);
+    setTimeout(_ => appendBuffer, 0);
     return;
   }
   try {
+  console.log("sourceBuffer.appendBuffer");
     sourceBuffer.appendBuffer(pendingBuffers[0]);
     pendingBuffers.shift();
   } catch (error) {
+    console.error(error);
     // mediaSource.removeSourceBuffer(sourceBuffer);
     // sourceBuffer = mediaSource.addSourceBuffer(mimeType);
     // sourceBuffer.mode = "sequence";
