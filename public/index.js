@@ -92,11 +92,14 @@ function playVideo() {
   video.src = URL.createObjectURL(mediaSource);
   mediaSource.onsourceopen = () => {
     console.log("sourceopen");
-    sourceBuffer = mediaSource.addSourceBuffer(mimeType);
-    sourceBuffer.mode = "sequence";
 
     socket.on("playback", event => {
       console.log("playback!", event);
+      if (event.containsInitSegment) {
+        pendingBuffers = [];
+        sourceBuffer = mediaSource.addSourceBuffer(mimeType);
+        sourceBuffer.mode = "sequence";
+      }
       pendingBuffers.push(event.blob);
 
       // Receive video stream from server and play it back.
@@ -106,7 +109,7 @@ function playVideo() {
 }
 
 function appendBuffer() {
-  console.log('appendBuffer');
+  console.log("appendBuffer");
   if (pendingBuffers.length === 0) return;
   if (sourceBuffer.updating) {
     setTimeout(_ => appendBuffer, 100);
