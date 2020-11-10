@@ -5,6 +5,7 @@ const mimeType = "video/webm; codecs=vp9";
 
 let stream;
 let mediaRecorder;
+let containsInitSegment = false;
 
 getUserMediaButton.onclick = async () => {
   stream = await navigator.mediaDevices.getUserMedia({
@@ -31,10 +32,12 @@ function startStreaming() {
     mimeType,
     videoBitsPerSecond: 100000
   });
+  containsInitSegment = true;
   mediaRecorder.start(600 /* timeslice */);
   mediaRecorder.ondataavailable = event => {
     console.log("ondataavailable!");
-    socket.emit("broadcast", { blob: event.data });
+    socket.emit("broadcast", { blob: event.data, containsInitSegment });
+    containsInitSegment = false;
   };
 }
 
@@ -97,17 +100,16 @@ function playVideo() {
       pendingBuffers.push(event.blob);
 
       // Receive video stream from server and play it back.
-      appendBuffer(sourceBuffer);
+      appendBuffer();
     });
   };
 }
 
 function appendBuffer() {
+  console.log('appendBuffer');
   if (pendingBuffers.length === 0) return;
   if (sourceBuffer.updating) {
-    setTimeout(_ => {
-      appendBuffer(sourceBuffer);
-    }, 100);
+    setTimeout(_ => appendBuffer, 100);
     return;
   }
   try {
@@ -115,8 +117,8 @@ function appendBuffer() {
     pendingBuffers.shift();
   } catch (error) {
     mediaSource.removeSourceBuffer(sourceBuffer);
-    sourceBuffer = mediaSource.addSourceBuffer(mimeType);
-    sourceBuffer.mode = "sequence";
+    // sourceBuffer = mediaSource.addSourceBuffer(mimeType);
+    // sourceBuffer.mode = "sequence";
   }
 }
 
