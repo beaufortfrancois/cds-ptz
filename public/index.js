@@ -36,6 +36,8 @@ function startStreaming() {
   mediaRecorder.start(600 /* timeslice */);
   mediaRecorder.ondataavailable = event => {
     console.log("ondataavailable!");
+
+    console.log(containsInitSegment);
     socket.emit("broadcast", { blob: event.data, containsInitSegment });
     containsInitSegment = false;
   };
@@ -83,10 +85,24 @@ let pendingBuffers = [];
 let mediaSource;
 let sourceBuffer;
 
+socket.on("playback", ({ blob, containsInitSegment }) => {
+  console.log("playback!", { blob, containsInitSegment });
+  if (containsInitSegment) {
+    pendingBuffers = [blob];
+    playVideo();
+    return;
+  }
+  pendingBuffers.push(blob);
+
+  // Receive video stream from server and play it back.
+  appendBuffer();
+});
+
 function playVideo() {
+  console.log("playVideo");
   if (video.src) {
     URL.revokeObjectURL(video.src);
-    video.src = null;
+    video.srcObject = null;
   }
   mediaSource = new MediaSource();
   video.src = URL.createObjectURL(mediaSource);
@@ -94,44 +110,27 @@ function playVideo() {
     console.log("sourceopen");
     sourceBuffer = mediaSource.addSourceBuffer(mimeType);
     sourceBuffer.mode = "sequence";
-
-    socket.on("playback", ({ blob, containsInitSegment }) => {
-      console.log("playback!", { blob, containsInitSegment });
-      if (containsInitSegment) {
-        pendingBuffers = [blob];
-        playVideo();
-        return;
-        // if (mediaSource.sourceBuffers.length) {
-        //   mediaSource.removeSourceBuffer(mediaSource.sourceBuffers[0]);
-        //   console.log(mediaSource.sourceBuffers);
-        // }
-      }
-      pendingBuffers.push(blob);
-
-      // Receive video stream from server and play it back.
-      appendBuffer();
-    });
   };
 }
 
 function appendBuffer() {
   console.log("appendBuffer");
   if (pendingBuffers.length === 0) return;
-  if (sourceBuffer.updating) {
+  if (!sourceBuffer || sourceBuffer.updating) {
     setTimeout(_ => appendBuffer, 100);
     return;
   }
-  // try {
-  sourceBuffer.appendBuffer(pendingBuffers[0]);
-  pendingBuffers.shift();
-  // } catch (error) {
-  // mediaSource.removeSourceBuffer(sourceBuffer);
-  // sourceBuffer = mediaSource.addSourceBuffer(mimeType);
-  // sourceBuffer.mode = "sequence";
-  // }
+  try {
+    sourceBuffer.appendBuffer(pendingBuffers[0]);
+    pendingBuffers.shift();
+  } catch (error) {
+    // mediaSource.removeSourceBuffer(sourceBuffer);
+    // sourceBuffer = mediaSource.addSourceBuffer(mimeType);
+    // sourceBuffer.mode = "sequence";
+  }
 }
 
-playVideo();
+// playVideo();
 
 /* Clients count */
 
