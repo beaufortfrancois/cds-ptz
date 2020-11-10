@@ -34,7 +34,6 @@ function startStreaming() {
     console.log("ondataavailable!");
     socket.emit("broadcast", { blob: event.data });
   };
-  playVideo();
 }
 
 /* Camera PTZ */
@@ -76,13 +75,19 @@ socket.on("camera", event => {
 /* Playback video */
 
 function playVideo() {
+  if (video.src) {
+    URL.revokeObjectURL(video.src);
+    video.src = null;
+  }
   const mediaSource = new MediaSource();
   video.src = URL.createObjectURL(mediaSource);
   mediaSource.onsourceopen = () => {
+    console.log("sourceopen");
     const sourceBuffer = mediaSource.addSourceBuffer(mimeType);
     sourceBuffer.mode = "sequence";
 
     socket.on("playback", event => {
+      console.log('playback!', event);
       // Receive video stream from server and play it back.
       if (!sourceBuffer.updating) sourceBuffer.appendBuffer(event.blob);
     });
@@ -95,7 +100,9 @@ playVideo();
 socket.on("clients", ({ type, count }) => {
   console.log("clients", type, count);
   if (stream && type === "connect") {
+    socket.on("playback", null);
     startStreaming();
+    playVideo();
   }
   clientsCount.textContent = count;
 });
