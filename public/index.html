@@ -11,7 +11,7 @@
       }
       #video {
         width: 100%;
-        height: calc(100vw * 3 / 4);
+        height: calc(min(100vw, 100vh) * 3 / 4);
         background: #333;
       }
       button,
@@ -35,6 +35,7 @@
     <input type="range" id="zoom" disabled />
     <button id="getUserMediaButton">Stream</button>
     <div id="clientsCount"></div>
+    <video id="live" autoplay muted></video>
 
     <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
     <script src="index.js"></script>

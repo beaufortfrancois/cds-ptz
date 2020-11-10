@@ -10,6 +10,7 @@ getUserMediaButton.onclick = async () => {
   stream = await navigator.mediaDevices.getUserMedia({
     video: { width: 160, height: 120, pan: true, tilt: true, zoom: true }
   });
+  live.srcObject = stream;
   startStreaming();
 
   const [videoTrack] = stream.getVideoTracks();
@@ -25,6 +26,7 @@ getUserMediaButton.onclick = async () => {
 
 function startStreaming() {
   console.log("startStreaming");
+  mediaRecorder?.stop();
   mediaRecorder = new MediaRecorder(stream, {
     mimeType,
     videoBitsPerSecond: 100000
