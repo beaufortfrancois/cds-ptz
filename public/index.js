@@ -11,8 +11,28 @@ getUserMediaButton.onclick = async () => {
   stream = await navigator.mediaDevices.getUserMedia({
     video: { width: 1, height: 1, pan: true, tilt: true, zoom: true }
   });
-  live.srcObject = stream;
   startStreaming();
+};
+
+function startStreaming() {
+  if (mediaRecorder) {
+    mediaRecorder.stop();
+    setTimeout(_ => {
+      mediaRecorder = undefined;
+      startStreaming();
+    }, 100);
+    return;
+  }
+  mediaRecorder = new MediaRecorder(stream, {
+    mimeType,
+    videoBitsPerSecond: 100000
+  });
+  containsInitSegment = true;
+  mediaRecorder.start(2000 /* timeslice */);
+  mediaRecorder.ondataavailable = ({ data }) => {
+    socket.emit("broadcast", { data, containsInitSegment });
+    containsInitSegment = false;
+  };
 
   const [videoTrack] = stream.getVideoTracks();
   {
@@ -23,28 +43,6 @@ getUserMediaButton.onclick = async () => {
     const { pan, tilt, zoom } = videoTrack.getCapabilities();
     socket.emit("capabilities", { pan, tilt, zoom });
   }
-};
-
-function startStreaming() {
-  console.log("startStreaming");
-  mediaRecorder = new MediaRecorder(stream, {
-    mimeType,
-    videoBitsPerSecond: 100000
-  });
-  containsInitSegment = true;
-  mediaRecorder.start(2000 /* timeslice */);
-  mediaRecorder.ondataavailable = ({ data }) => {
-    const date = new Date();
-    console.log(
-      `[ondataavailable] containsInitSegment: ${containsInitSegment}, date: ${date.toJSON()}`
-    );
-    if (containsInitSegment) {
-      socket.emit("broadcast", { data, containsInitSegment, date });
-    }
-    // mediaRecorder.stop();
-    // setTimeout(startStreaming, 0);
-    containsInitSegment = false;
-  };
 }
 
 /* Playback video */
@@ -54,7 +52,6 @@ let mediaSource;
 let sourceBuffer;
 
 socket.on("playback", ({ data, containsInitSegment, date }) => {
-  // console.log("playback!", { containsInitSegment, date });
   if (containsInitSegment) {
     resetVideo();
     pendingData = [data];
@@ -66,11 +63,9 @@ socket.on("playback", ({ data, containsInitSegment, date }) => {
 });
 
 function resetVideo() {
-  console.log("resetVideo");
   mediaSource = new MediaSource();
   video.src = URL.createObjectURL(mediaSource);
   mediaSource.onsourceopen = () => {
-    console.log("sourceopen");
     sourceBuffer = mediaSource.addSourceBuffer(mimeType);
     sourceBuffer.mode = "sequence";
     appendBuffer();
@@ -80,11 +75,9 @@ function resetVideo() {
 function appendBuffer() {
   if (pendingData.length === 0) return;
   if (!sourceBuffer || sourceBuffer.updating) {
-    console.log("HEY!", !sourceBuffer, sourceBuffer.updating);
     setTimeout(_ => appendBuffer, 100);
     return;
   }
-  console.log("sourceBuffer.appendBuffer");
   sourceBuffer.appendBuffer(pendingData[0]);
   pendingData.shift();
 }
