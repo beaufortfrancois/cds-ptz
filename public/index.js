@@ -3,22 +3,15 @@ const mimeType = "video/webm; codecs=vp9";
 
 /* Recording */
 
-let videoTrack;
+let stream;
 
 getUserMediaButton.onclick = async () => {
-  const stream = await navigator.mediaDevices.getUserMedia({
+  stream = await navigator.mediaDevices.getUserMedia({
     video: { width: 160, height: 120, pan: true, tilt: true, zoom: true }
   });
-  const mediaRecorder = new MediaRecorder(stream, {
-    mimeType,
-    videoBitsPerSecond: 100000
-  });
-  mediaRecorder.start(1000 /* timeslice */);
-  mediaRecorder.ondataavailable = event => {
-    socket.emit("broadcast", { blob: event.data });
-  };
+  startStreaming();
 
-  [videoTrack] = stream.getVideoTracks();
+  const [videoTrack] = stream.getVideoTracks();
   {
     const { pan, tilt, zoom } = videoTrack.getSettings();
     socket.emit("settings", { pan, tilt, zoom });
@@ -28,6 +21,19 @@ getUserMediaButton.onclick = async () => {
     socket.emit("capabilities", { pan, tilt, zoom });
   }
 };
+
+let mediaRecorder;
+
+function startStreaming() {
+  mediaRecorder = new MediaRecorder(stream, {
+    mimeType,
+    videoBitsPerSecond: 100000
+  });
+  mediaRecorder.start(1000 /* timeslice */);
+  mediaRecorder.ondataavailable = event => {
+    socket.emit("broadcast", { blob: event.data });
+  };
+}
 
 /* Camera PTZ */
 
@@ -61,6 +67,7 @@ zoom.oninput = () => {
 };
 
 socket.on("camera", event => {
+  const [videoTrack] = stream.getVideoTracks();
   videoTrack.applyConstraints({ advanced: [event] });
 });
 
@@ -80,6 +87,9 @@ mediaSource.onsourceopen = () => {
 
 /* Clients count */
 
-socket.on("clients", event => {
-  clientsCount.textContent = event;
+socket.on("clients", ({ type, count }) => {
+  if (type === "connect" && stream) {
+    startStreaming();
+  }
+  clientsCount.textContent = count;
 });

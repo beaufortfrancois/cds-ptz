@@ -1,6 +1,6 @@
 {
   "name": "cds-ptz",
-  "version": "0.0.4",
+  "version": "0.0.1",
   "description": "Demo of PTZ remote",
   "scripts": {
     "start": "node server.js"
