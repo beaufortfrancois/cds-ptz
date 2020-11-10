@@ -28,7 +28,7 @@ function startStreaming() {
     videoBitsPerSecond: 100000
   });
   containsInitSegment = true;
-  mediaRecorder.start(2000 /* timeslice */);
+  mediaRecorder.start(500 /* timeslice */);
   mediaRecorder.ondataavailable = ({ data }) => {
     socket.emit("broadcast", { data, containsInitSegment });
     containsInitSegment = false;
@@ -124,5 +124,5 @@ socket.on("clients", ({ type, count }) => {
   if (stream && type === "connection") {
     startStreaming();
   }
-  clientsCount.textContent = count;
+  if (count) clientsCount.textContent = `${count} watching`;
 });
