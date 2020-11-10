@@ -90,6 +90,7 @@ function playVideo() {
 
     socket.on("playback", event => {
       console.log('playback!', event);
+      bu
       // Receive video stream from server and play it back.
       if (!sourceBuffer.updating) sourceBuffer.appendBuffer(event.blob);
     });
@@ -102,9 +103,9 @@ playVideo();
 socket.on("clients", ({ type, count }) => {
   console.log("clients", type, count);
   if (stream && type === "connect") {
-    socket.on("playback", null);
+    // socket.on("playback", null);
     startStreaming();
-    playVideo();
+    // playVideo();
   }
   clientsCount.textContent = count;
 });
