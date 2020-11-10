@@ -27,8 +27,6 @@ getUserMediaButton.onclick = async () => {
 
 function startStreaming() {
   console.log("startStreaming");
-
-  mediaRecorder?.stop();
   mediaRecorder = new MediaRecorder(stream, {
     mimeType,
     videoBitsPerSecond: 100000
@@ -40,8 +38,9 @@ function startStreaming() {
     console.log(
       `[ondataavailable] containsInitSegment: ${containsInitSegment}, date: ${date.toJSON()}`
     );
-    if (containsInitSegment
+    if (containsInitSegment) {
       socket.emit("broadcast", { data, containsInitSegment, date });
+    }
     containsInitSegment = false;
   };
 }
@@ -66,10 +65,6 @@ socket.on("playback", ({ data, containsInitSegment, date }) => {
 
 function resetVideo() {
   console.log("resetVideo");
-  // if (video.src) {
-  // URL.revokeObjectURL(video.src);
-  // video.src = null;
-  // }
   mediaSource = new MediaSource();
   video.src = URL.createObjectURL(mediaSource);
   mediaSource.onsourceopen = () => {
