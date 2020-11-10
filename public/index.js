@@ -27,47 +27,49 @@ getUserMediaButton.onclick = async () => {
 
 function startStreaming() {
   console.log("startStreaming");
+
+  mediaRecorder?.stop();
   mediaRecorder = new MediaRecorder(stream, {
     mimeType,
     videoBitsPerSecond: 100000
   });
   containsInitSegment = true;
-  mediaRecorder.start(500 /* timeslice */);
-  mediaRecorder.ondataavailable = event => {
-    // console.log("ondataavailable!");
-
+  mediaRecorder.start(2000 /* timeslice */);
+  mediaRecorder.ondataavailable = ({ data }) => {
     const date = new Date();
-    // console.log({ containsInitSegment });
-    console.log("date:" + date.toJSON());
-    socket.emit("broadcast", { blob: event.data, containsInitSegment, date });
+    console.log(
+      `[ondataavailable] containsInitSegment: ${containsInitSegment}, date: ${date.toJSON()}`
+    );
+    if (containsInitSegment
+      socket.emit("broadcast", { data, containsInitSegment, date });
     containsInitSegment = false;
   };
 }
 
 /* Playback video */
 
-let pendingBuffers = [];
+let pendingData = [];
 let mediaSource;
 let sourceBuffer;
 
-socket.on("playback", ({ blob, containsInitSegment, date }) => {
+socket.on("playback", ({ data, containsInitSegment, date }) => {
   // console.log("playback!", { containsInitSegment, date });
   if (containsInitSegment) {
     resetVideo();
-    pendingBuffers = [blob];
+    pendingData = [data];
     return;
   }
-  pendingBuffers.push(blob);
+  pendingData.push(data);
   // Receive video stream from server and play it back.
   appendBuffer();
 });
 
 function resetVideo() {
   console.log("resetVideo");
-  if (video.src) {
-    URL.revokeObjectURL(video.src);
-    video.srcObject = null;
-  }
+  // if (video.src) {
+  // URL.revokeObjectURL(video.src);
+  // video.src = null;
+  // }
   mediaSource = new MediaSource();
   video.src = URL.createObjectURL(mediaSource);
   mediaSource.onsourceopen = () => {
@@ -79,16 +81,15 @@ function resetVideo() {
 }
 
 function appendBuffer() {
-  // console.log("appendBuffer", pendingBuffers);
-  if (pendingBuffers.length === 0) return;
+  if (pendingData.length === 0) return;
   if (!sourceBuffer || sourceBuffer.updating) {
     console.log("HEY!", !sourceBuffer, sourceBuffer.updating);
     setTimeout(_ => appendBuffer, 100);
     return;
   }
   console.log("sourceBuffer.appendBuffer");
-  sourceBuffer.appendBuffer(pendingBuffers[0]);
-  pendingBuffers.shift();
+  sourceBuffer.appendBuffer(pendingData[0]);
+  pendingData.shift();
 }
 
 /* Camera PTZ */
