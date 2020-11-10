@@ -92,15 +92,21 @@ function playVideo() {
   video.src = URL.createObjectURL(mediaSource);
   mediaSource.onsourceopen = () => {
     console.log("sourceopen");
+    sourceBuffer = mediaSource.addSourceBuffer(mimeType);
+    sourceBuffer.mode = "sequence";
 
-    socket.on("playback", event => {
-      console.log("playback!", event);
-      if (event.containsInitSegment) {
-        pendingBuffers = [];
-        sourceBuffer = mediaSource.addSourceBuffer(mimeType);
-        sourceBuffer.mode = "sequence";
+    socket.on("playback", ({ blob, containsInitSegment }) => {
+      console.log("playback!", { blob, containsInitSegment });
+      if (containsInitSegment) {
+        pendingBuffers = [blob];
+        playVideo();
+        return;
+        // if (mediaSource.sourceBuffers.length) {
+        //   mediaSource.removeSourceBuffer(mediaSource.sourceBuffers[0]);
+        //   console.log(mediaSource.sourceBuffers);
+        // }
       }
-      pendingBuffers.push(event.blob);
+      pendingBuffers.push(blob);
 
       // Receive video stream from server and play it back.
       appendBuffer();
@@ -115,14 +121,14 @@ function appendBuffer() {
     setTimeout(_ => appendBuffer, 100);
     return;
   }
-  try {
-    sourceBuffer.appendBuffer(pendingBuffers[0]);
-    pendingBuffers.shift();
-  } catch (error) {
-    mediaSource.removeSourceBuffer(sourceBuffer);
-    // sourceBuffer = mediaSource.addSourceBuffer(mimeType);
-    // sourceBuffer.mode = "sequence";
-  }
+  // try {
+  sourceBuffer.appendBuffer(pendingBuffers[0]);
+  pendingBuffers.shift();
+  // } catch (error) {
+  // mediaSource.removeSourceBuffer(sourceBuffer);
+  // sourceBuffer = mediaSource.addSourceBuffer(mimeType);
+  // sourceBuffer.mode = "sequence";
+  // }
 }
 
 playVideo();
