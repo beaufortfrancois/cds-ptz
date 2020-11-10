@@ -37,8 +37,10 @@ function startStreaming() {
   mediaRecorder.ondataavailable = event => {
     console.log("ondataavailable!");
 
-    console.log(containsInitSegment);
-    socket.emit("broadcast", { blob: event.data, containsInitSegment });
+    const date = new Date();
+    console.log({ containsInitSegment });
+    console.log("date:" + date.toJSON());
+    socket.emit("broadcast", { blob: event.data, containsInitSegment, date });
     containsInitSegment = false;
   };
 }
@@ -85,15 +87,14 @@ let pendingBuffers = [];
 let mediaSource;
 let sourceBuffer;
 
-socket.on("playback", ({ blob, containsInitSegment }) => {
-  console.log("playback!", { containsInitSegment });
+socket.on("playback", ({ blob, containsInitSegment, date }) => {
+  console.log("playback!", { containsInitSegment, date });
   if (containsInitSegment) {
     pendingBuffers = [blob];
     playVideo();
     return;
   }
   pendingBuffers.push(blob);
-
   // Receive video stream from server and play it back.
   appendBuffer();
 });
@@ -110,6 +111,7 @@ function playVideo() {
     console.log("sourceopen");
     sourceBuffer = mediaSource.addSourceBuffer(mimeType);
     sourceBuffer.mode = "sequence";
+    appendBuffer();
   };
 }
 
@@ -117,20 +119,13 @@ function appendBuffer() {
   console.log("appendBuffer", pendingBuffers);
   if (pendingBuffers.length === 0) return;
   if (!sourceBuffer || sourceBuffer.updating) {
-    console.log('HEY!', !sourceBuffer, sourceBuffer.updating);
+    console.log("HEY!", !sourceBuffer, sourceBuffer.updating);
     setTimeout(_ => appendBuffer, 0);
     return;
   }
-  try {
   console.log("sourceBuffer.appendBuffer");
-    sourceBuffer.appendBuffer(pendingBuffers[0]);
-    pendingBuffers.shift();
-  } catch (error) {
-    console.error(error);
-    // mediaSource.removeSourceBuffer(sourceBuffer);
-    // sourceBuffer = mediaSource.addSourceBuffer(mimeType);
-    // sourceBuffer.mode = "sequence";
-  }
+  sourceBuffer.appendBuffer(pendingBuffers[0]);
+  pendingBuffers.shift();
 }
 
 // playVideo();
@@ -138,11 +133,8 @@ function appendBuffer() {
 /* Clients count */
 
 socket.on("clients", ({ type, count }) => {
-  console.log("clients", type, count);
   if (stream && type === "connect") {
-    // socket.on("playback", null);
     startStreaming();
-    // playVideo();
   }
   clientsCount.textContent = count;
 });
