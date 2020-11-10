@@ -4,6 +4,7 @@ const mimeType = "video/webm; codecs=vp9";
 /* Recording */
 
 let stream;
+let mediaRecorder;
 
 getUserMediaButton.onclick = async () => {
   stream = await navigator.mediaDevices.getUserMedia({
@@ -22,9 +23,8 @@ getUserMediaButton.onclick = async () => {
   }
 };
 
-let mediaRecorder;
-
 function startStreaming() {
+  console.log('startStreaming');
   mediaRecorder = new MediaRecorder(stream, {
     mimeType,
     videoBitsPerSecond: 100000
@@ -88,8 +88,9 @@ mediaSource.onsourceopen = () => {
 /* Clients count */
 
 socket.on("clients", ({ type, count }) => {
-  if (type === "connect" && stream) {
-    startStreaming();
-  }
+  console.log('clients', type, count);
+  // if (stream && type === "connect") {
+    // startStreaming();
+  // }
   clientsCount.textContent = count;
 });

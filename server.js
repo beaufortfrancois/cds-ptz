@@ -8,6 +8,7 @@ let videoStreamingSocket;
 let numberOfClientsConnected = 0;
 
 io.on("connection", socket => {
+  console.log('connection!');
   numberOfClientsConnected++;
   io.emit("clients", {
     type: "connect",
