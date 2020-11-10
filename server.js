@@ -10,7 +10,7 @@ let numberOfClientsConnected = 0;
 io.on("connection", socket => {
   numberOfClientsConnected++;
   io.emit("clients", {
-    type: "connect",
+    type: "connection",
     count: numberOfClientsConnected - 1
   });
 
@@ -35,7 +35,7 @@ io.on("connection", socket => {
   socket.on("disconnect", reason => {
     numberOfClientsConnected--;
     io.emit("clients", {
-      type: "disconnect",
+      type: "disconnection",
       count: numberOfClientsConnected - 1
     });
   });

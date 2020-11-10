@@ -9,7 +9,7 @@ let containsInitSegment = false;
 
 getUserMediaButton.onclick = async () => {
   stream = await navigator.mediaDevices.getUserMedia({
-    video: { width: 160, height: 120, pan: true, tilt: true, zoom: true }
+    video: { width: 1, height: 1, pan: true, tilt: true, zoom: true }
   });
   live.srcObject = stream;
   startStreaming();
@@ -27,7 +27,6 @@ getUserMediaButton.onclick = async () => {
 
 function startStreaming() {
   console.log("startStreaming");
-  mediaRecorder?.stop();
   mediaRecorder = new MediaRecorder(stream, {
     mimeType,
     videoBitsPerSecond: 100000
@@ -35,14 +34,61 @@ function startStreaming() {
   containsInitSegment = true;
   mediaRecorder.start(500 /* timeslice */);
   mediaRecorder.ondataavailable = event => {
-    console.log("ondataavailable!");
+    // console.log("ondataavailable!");
 
     const date = new Date();
-    console.log({ containsInitSegment });
+    // console.log({ containsInitSegment });
     console.log("date:" + date.toJSON());
     socket.emit("broadcast", { blob: event.data, containsInitSegment, date });
     containsInitSegment = false;
   };
+}
+
+/* Playback video */
+
+let pendingBuffers = [];
+let mediaSource;
+let sourceBuffer;
+
+socket.on("playback", ({ blob, containsInitSegment, date }) => {
+  // console.log("playback!", { containsInitSegment, date });
+  if (containsInitSegment) {
+    resetVideo();
+    pendingBuffers = [blob];
+    return;
+  }
+  pendingBuffers.push(blob);
+  // Receive video stream from server and play it back.
+  appendBuffer();
+});
+
+function resetVideo() {
+  console.log("resetVideo");
+  if (video.src) {
+    URL.revokeObjectURL(video.src);
+    video.srcObject = null;
+  }
+  mediaSource = new MediaSource();
+  video.src = URL.createObjectURL(mediaSource);
+  mediaSource.onsourceopen = () => {
+    console.log("sourceopen");
+    sourceBuffer = mediaSource.addSourceBuffer(mimeType);
+    sourceBuffer.mode = "sequence";
+    appendBuffer();
+  };
+}
+
+function appendBuffer() {
+  // console.log("appendBuffer", pendingBuffers);
+  if (pendingBuffers.length === 0) return;
+  if (!sourceBuffer || sourceBuffer.updating) {
+    console.log("HEY!", !sourceBuffer, sourceBuffer.updating);
+    setTimeout(_ => appendBuffer, 100);
+    return;
+  }
+  console.log("sourceBuffer.appendBuffer");
+  sourceBuffer.appendBuffer(pendingBuffers[0]);
+  pendingBuffers.shift();
 }
 
 /* Camera PTZ */
@@ -81,59 +127,10 @@ socket.on("camera", event => {
   videoTrack.applyConstraints({ advanced: [event] });
 });
 
-/* Playback video */
-
-let pendingBuffers = [];
-let mediaSource;
-let sourceBuffer;
-
-socket.on("playback", ({ blob, containsInitSegment, date }) => {
-  console.log("playback!", { containsInitSegment, date });
-  if (containsInitSegment) {
-    pendingBuffers = [blob];
-    playVideo();
-    return;
-  }
-  pendingBuffers.push(blob);
-  // Receive video stream from server and play it back.
-  appendBuffer();
-});
-
-function playVideo() {
-  console.log("playVideo");
-  if (video.src) {
-    URL.revokeObjectURL(video.src);
-    video.srcObject = null;
-  }
-  mediaSource = new MediaSource();
-  video.src = URL.createObjectURL(mediaSource);
-  mediaSource.onsourceopen = () => {
-    console.log("sourceopen");
-    sourceBuffer = mediaSource.addSourceBuffer(mimeType);
-    sourceBuffer.mode = "sequence";
-    appendBuffer();
-  };
-}
-
-function appendBuffer() {
-  console.log("appendBuffer", pendingBuffers);
-  if (pendingBuffers.length === 0) return;
-  if (!sourceBuffer || sourceBuffer.updating) {
-    console.log("HEY!", !sourceBuffer, sourceBuffer.updating);
-    setTimeout(_ => appendBuffer, 0);
-    return;
-  }
-  console.log("sourceBuffer.appendBuffer");
-  sourceBuffer.appendBuffer(pendingBuffers[0]);
-  pendingBuffers.shift();
-}
-
-// playVideo();
-
 /* Clients count */
 
 socket.on("clients", ({ type, count }) => {
-  if (stream && type === "connect") {
+  if (stream && type === "connection") {
     startStreaming();
   }
   clientsCount.textContent = count;
