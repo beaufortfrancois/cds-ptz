@@ -7,7 +7,7 @@ var io = require("socket.io")(server);
 let videoStreamingSocket;
 let numberOfClientsConnected = 0;
 
-let firstVideoStreamingData;
+let lastInitSegment;
 
 io.on("connection", socket => {
   numberOfClientsConnected++;
@@ -15,14 +15,11 @@ io.on("connection", socket => {
     type: "connection",
     count: numberOfClientsConnected - 1
   });
-  if (firstVideoStreamingData)
-    socket.emit("firstVideoStreamingData", firstVideoStreamingData);
+  if (lastInitSegment) socket.emit("lastInitSegment", lastInitSegment);
 
   socket.on("broadcast", data => {
-    // if (videoStreamingSocket) videoStreamingSocket.disconnect(true);
-    if (videoStreamingSocket != socket) {
-      firstVideoStreamingData = data;
-    }
+    if (data.containsInitSegment)
+    if (videoStreamingSocket != socket) lastInitSegment = data;
     videoStreamingSocket = socket;
     // Broadcast video stream to all connected clients.
     io.emit("playback", data);

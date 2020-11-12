@@ -119,7 +119,16 @@ socket.on("camera", event => {
 });
 
 socket.on("firstVideoStreamingData", event => {
-  console.log(event);
+  const v = document.createElement("video");
+  v.muted = true;
+  v.autoplay = true;
+  const mediaSource = new MediaSource();
+  v.src = URL.createObjectURL(mediaSource);
+  mediaSource.onsourceopen = () => {
+    const sourceBuffer = mediaSource.addSourceBuffer(mimeType);
+    sourceBuffer.appendBuffer(event.data);
+  };
+  document.body.appendChild(v);
 });
 
 /* Clients count */
