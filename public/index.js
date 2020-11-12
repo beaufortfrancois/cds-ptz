@@ -140,5 +140,5 @@ socket.on("clients", ({ type, count }) => {
   if (stream && type === "connection") {
     startStreaming();
   }
-  if (count) clientsCount.textContent = `${count} watching`;
+  clientsCount.textContent = count ? `${count} watching` : "";
 });
