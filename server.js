@@ -18,7 +18,7 @@ io.on("connection", socket => {
   if (lastFirstData) socket.emit("lastFirstData", lastFirstData);
 
   socket.on("broadcast", data => {
-    if (data.containsInitSegment) {
+    if (videoStreamingSocket != socket) {
       lastFirstData = data;
       videoStreamingSocket = socket;
     }

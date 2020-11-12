@@ -124,15 +124,13 @@ socket.on("lastFirstData", event => {
   v.muted = true;
   const mediaSource = new MediaSource();
   v.src = URL.createObjectURL(mediaSource);
-  mediaSource.onsourceopen = () => {
+  mediaSource.onsourceopen = async () => {
     mediaSource.addSourceBuffer(mimeType).appendBuffer(lastFirstData);
-    v.play().then(_ => {
-      const canvas = document.createElement("canvas");
-      canvas.width = v.videoWidth;
-      canvas.height = v.videoHeight;
-      canvas.getContext("2d").drawImage(v, 0, 0);
-      document.body.appendChild(canvas);
-    });
+    await v.play();
+    canvas.width = v.videoWidth;
+    canvas.height = v.videoHeight;
+    canvas.getContext("2d").drawImage(v, 0, 0);
+    canvas.title = "Snapshot of last recording";
   };
 });
 

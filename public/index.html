@@ -11,12 +11,15 @@
       }
       video {
         width: 100%;
-        height: calc(min(100vw, 100vh) * 3 / 4);
+        height: calc(min(100vw, 100vh) * 2 / 3);
         background: #efefef;
       }
       button,
       input {
         margin: 1em auto;
+      }
+      canvas {
+        border-radius: 24px;
       }
     </style>
   </head>
@@ -29,6 +32,8 @@
     <button id="getUserMediaButton">Stream</button>
     <br/>
     <span id="clientsCount"></span>
+    <br/>
+    <canvas id="canvas"></canvas>
 
     <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
     <script src="index.js"></script>
