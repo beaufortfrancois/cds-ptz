@@ -113,19 +113,19 @@ zoom.oninput = () => {
   socket.emit("camera", { zoom: zoom.value });
 };
 
-socket.on("camera", event => {
+socket.on("camera", constraints => {
   const [videoTrack] = stream.getVideoTracks();
-  videoTrack.applyConstraints({ advanced: [event] });
+  videoTrack.applyConstraints({ advanced: [constraints] });
 });
 
+/* Display snapshot of the last streaming beginning */
+
 socket.on("lastFirstData", event => {
-  const lastFirstData = event.data;
-  const v = document.createElement("video");
-  v.muted = true;
-  const mediaSource = new MediaSource();
-  v.src = URL.createObjectURL(mediaSource);
-  mediaSource.onsourceopen = async () => {
-    mediaSource.addSourceBuffer(mimeType).appendBuffer(lastFirstData);
+  const v = Object.assign(document.createElement("video"), { muted: true });
+  const s = new MediaSource();
+  v.src = URL.createObjectURL(s);
+  s.onsourceopen = async () => {
+    s.addSourceBuffer(mimeType).appendBuffer(event.data);
     await v.play();
     canvas.width = v.videoWidth;
     canvas.height = v.videoHeight;
