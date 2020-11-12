@@ -53,6 +53,8 @@ let mediaSource;
 let sourceBuffer;
 
 socket.on("playback", ({ data, containsInitSegment, date }) => {
+  getUserMediaButton.hidden = !stream;
+
   if (containsInitSegment) {
     resetVideo();
     pendingData = [data];
@@ -114,6 +116,7 @@ socket.on("camera", constraints => {
 });
 
 /* Display snapshot of the last streaming beginning */
+
 socket.on("lastFirstData", event => {
   const v = Object.assign(document.createElement("video"), { muted: true });
   const s = new MediaSource();

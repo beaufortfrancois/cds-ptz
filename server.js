@@ -20,7 +20,8 @@ io.on("connection", socket => {
   socket.on("broadcast", data => {
     if (videoStreamingSocket != socket) {
       lastFirstData = data;
-      
+      socket.emit("lastFirstData", lastFirstData);
+    }
     videoStreamingSocket = socket;
     // Broadcast video stream to all connected clients.
     io.emit("playback", data);
