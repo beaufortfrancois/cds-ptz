@@ -118,17 +118,22 @@ socket.on("camera", event => {
   videoTrack.applyConstraints({ advanced: [event] });
 });
 
-socket.on("firstVideoStreamingData", event => {
+socket.on("lastFirstData", event => {
+  const lastFirstData = event.data;
   const v = document.createElement("video");
   v.muted = true;
-  v.autoplay = true;
   const mediaSource = new MediaSource();
   v.src = URL.createObjectURL(mediaSource);
   mediaSource.onsourceopen = () => {
-    const sourceBuffer = mediaSource.addSourceBuffer(mimeType);
-    sourceBuffer.appendBuffer(event.data);
+    mediaSource.addSourceBuffer(mimeType).appendBuffer(lastFirstData);
+    v.play().then(_ => {
+      const canvas = document.createElement("canvas");
+      canvas.width = v.videoWidth;
+      canvas.height = v.videoHeight;
+      canvas.getContext("2d").drawImage(v, 0, 0);
+      document.body.appendChild(canvas);
+    });
   };
-  document.body.appendChild(v);
 });
 
 /* Clients count */
