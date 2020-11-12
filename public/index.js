@@ -18,6 +18,7 @@ function startStreaming() {
   if (mediaRecorder) {
     mediaRecorder.stop();
     setTimeout(_ => {
+      // FIXME: I'm not sure why this is needed... ;(
       mediaRecorder = undefined;
       startStreaming();
     }, 100);
@@ -103,15 +104,9 @@ socket.on("capabilities", event => {
   });
 });
 
-pan.oninput = () => {
-  socket.emit("camera", { pan: pan.value });
-};
-tilt.oninput = () => {
-  socket.emit("camera", { tilt: tilt.value });
-};
-zoom.oninput = () => {
-  socket.emit("camera", { zoom: zoom.value });
-};
+pan.oninput = () => socket.emit("camera", { pan: pan.value });
+tilt.oninput = () => socket.emit("camera", { tilt: tilt.value });
+zoom.oninput = () => socket.emit("camera", { zoom: zoom.value });
 
 socket.on("camera", constraints => {
   const [videoTrack] = stream.getVideoTracks();
@@ -119,18 +114,19 @@ socket.on("camera", constraints => {
 });
 
 /* Display snapshot of the last streaming beginning */
-
 socket.on("lastFirstData", event => {
   const v = Object.assign(document.createElement("video"), { muted: true });
   const s = new MediaSource();
   v.src = URL.createObjectURL(s);
   s.onsourceopen = async () => {
     s.addSourceBuffer(mimeType).appendBuffer(event.data);
+    v.playbackRate = 10;
     await v.play();
     canvas.width = v.videoWidth;
     canvas.height = v.videoHeight;
-    canvas.getContext("2d").drawImage(v, 0, 0);
-    canvas.title = "Snapshot of last recording";
+    setTimeout(_ => {
+      canvas.getContext("2d").drawImage(v, 0, 0);
+    }, 500);
   };
 });
 
