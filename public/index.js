@@ -118,6 +118,10 @@ socket.on("camera", event => {
   videoTrack.applyConstraints({ advanced: [event] });
 });
 
+socket.on("firstVideoStreamingData", event => {
+  console.log(event);
+});
+
 /* Clients count */
 
 socket.on("clients", ({ type, count }) => {
