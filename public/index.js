@@ -1,7 +1,7 @@
 const socket = io();
 const mimeType = "video/webm; codecs=vp9";
 
-/* Recording */
+/* Recording & streaming */
 
 let stream;
 let mediaRecorder;
@@ -139,5 +139,5 @@ socket.on("clients", ({ type, count }) => {
   if (stream && type === "connection") {
     startStreaming();
   }
-  clientsCount.textContent = count ? `${count} watching` : "";
+  clientsCount.textContent = count ? `${count} connected` : "";
 });
