@@ -5,6 +5,7 @@
     <title>CDS PTZ</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
+      html,
       body {
         margin: 0 auto;
         text-align: center;
@@ -13,9 +14,10 @@
         width: calc(min(100vw, 100vh) * 1 / 2);
         height: calc(min(100vw, 100vh) * 1 / 2);
         background: rgb(222, 225, 229);
+        background: rgb(203, 203, 203);
         display: block;
         margin: 0 auto;
-        border-radius: 24px;
+        border-radius: 12px;
         margin-top: 24px;
       }
       button,
@@ -23,12 +25,11 @@
         margin: 1em auto;
       }
       canvas {
-            position: absolute;
-    top: calc(min(100vw, 100vh) * 1 / 2 - 132px);
-    margin-top: 24px;
-    right: calc(min(100vw, 100vh) * 1 / 2 - 132px);
-        border-radius: 24px;
-        background: red;//rgb(222, 225, 229);
+        position: absolute;
+        top: 24px;
+        right: 24px;
+        border-radius: 50%;
+        background: rgb(222, 225, 229);
         width: 60px;
         height: 60px;
       }

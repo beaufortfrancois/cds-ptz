@@ -137,8 +137,8 @@ socket.on("lastFirstData", event => {
 /* Clients count */
 
 socket.on("clients", ({ type, count }) => {
-  if (stream && type === "connection") {
-    startStreaming();
-  }
+  if (!stream) return;
+
   clientsCount.textContent = count ? `${count} connected` : "";
+  if (type === "connection") startStreaming();
 });
