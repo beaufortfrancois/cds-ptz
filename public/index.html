@@ -5,6 +5,9 @@
     <title>CDS PTZ</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
+      :root {
+        color-scheme: light dark;
+      }
       html,
       body {
         margin: 0 auto;
@@ -18,6 +21,11 @@
         margin: 0 auto;
         border-radius: 12px;
         margin-top: 24px;
+      }
+      @media (prefers-color-scheme: dark) {
+        video {
+          background: rgb(117, 117, 117);
+        }
       }
       button,
       input {
