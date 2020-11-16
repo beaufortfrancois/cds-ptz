@@ -54,6 +54,7 @@ let sourceBuffer;
 
 socket.on("playback", ({ data, containsInitSegment, date }) => {
   getUserMediaButton.hidden = !stream;
+  canvas.hidden = true;
 
   if (containsInitSegment) {
     resetVideo();
