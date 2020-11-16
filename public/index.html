@@ -13,7 +13,6 @@
       video {
         width: calc(min(100vw, 100vh) * 1 / 2);
         height: calc(min(100vw, 100vh) * 1 / 2);
-        background: rgb(222, 225, 229);
         background: rgb(203, 203, 203);
         display: block;
         margin: 0 auto;
@@ -29,7 +28,6 @@
         top: 24px;
         right: 24px;
         border-radius: 50%;
-        background: rgb(222, 225, 229);
         width: 60px;
         height: 60px;
       }
@@ -41,7 +39,7 @@
     <input type="range" id="tilt" disabled title="tilt" />
     <input type="range" id="zoom" disabled title="zoom" />
     <br />
-    <button id="getUserMediaButton">Stream</button>
+    <button id="getUserMediaButton">Stream camera</button>
     <span id="clientsCount"></span>
     <br />
     <canvas id="canvas" title="Snapshot of last recording"></canvas>

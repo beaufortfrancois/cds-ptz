@@ -142,3 +142,7 @@ socket.on("clients", ({ type, count }) => {
   clientsCount.textContent = count ? `${count} connected` : "";
   if (type === "connection") startStreaming();
 });
+
+/* Picture-in-Picture */
+
+video.onclick = () => video.requestPictureInPicture();

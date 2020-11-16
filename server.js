@@ -1,7 +1,7 @@
 var express = require("express");
 var app = express();
 
-var server = app.listen(8081);
+var server = app.listen(8080);
 var io = require("socket.io")(server);
 
 let videoStreamingSocket;
