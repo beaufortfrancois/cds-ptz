@@ -13,7 +13,7 @@ io.on("connection", socket => {
   numberOfClientsConnected++;
   io.emit("clients", {
     type: "connection",
-    count: numberOfClientsConnected - 1
+    count: numberOfClientsConnected
   });
   if (lastFirstData) socket.emit("lastFirstData", lastFirstData);
 
@@ -47,7 +47,7 @@ io.on("connection", socket => {
     numberOfClientsConnected--;
     io.emit("clients", {
       type: "disconnection",
-      count: numberOfClientsConnected - 1
+      count: numberOfClientsConnected
     });
   });
 });
