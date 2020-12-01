@@ -52,10 +52,7 @@ let pendingData = [];
 let mediaSource;
 let sourceBuffer;
 
-socket.on("playback", ({ data, containsInitSegment, date }) => {
-  getUserMediaButton.hidden = !stream;
-  canvas.hidden = true;
-
+socket.on("playback", ({ data, containsInitSegment }) => {
   if (containsInitSegment) {
     resetVideo();
     pendingData = [data];
@@ -116,24 +113,6 @@ socket.on("camera", constraints => {
   videoTrack.applyConstraints({ advanced: [constraints] });
 });
 
-/* Display snapshot of the last streaming beginning */
-
-socket.on("lastFirstData", event => {
-  const v = Object.assign(document.createElement("video"), { muted: true });
-  const s = new MediaSource();
-  v.src = URL.createObjectURL(s);
-  s.onsourceopen = async () => {
-    s.addSourceBuffer(mimeType).appendBuffer(event.data);
-    v.playbackRate = 10;
-    await v.play();
-    canvas.width = v.videoWidth;
-    canvas.height = v.videoHeight;
-    setTimeout(_ => {
-      canvas.getContext("2d").drawImage(v, 0, 0);
-    }, 500);
-  };
-});
-
 /* Clients count */
 
 socket.on("clients", ({ type, count }) => {
@@ -143,6 +122,12 @@ socket.on("clients", ({ type, count }) => {
   if (type === "connection") startStreaming();
 });
 
+socket.on("allowedToBroadcast", allowedToBroadcast => {
+  getUserMediaButton.hidden = !allowedToBroadcast;
+});
+
 /* Picture-in-Picture */
 
-video.onclick = () => video.requestPictureInPicture();
+video.ononcanplay = () => {
+  video.onclick = () => video.requestPictureInPicture();
+};
